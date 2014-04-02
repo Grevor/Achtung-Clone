@@ -13,12 +13,13 @@ public class World {
 	private int nAliveSnakes;
 	private boolean	roundAlive;
 	
-	public World (int numberOfPlayers, int width, int height) {
+	public World (Controler[] controlers, int width, int height) {
+		int numberOfPlayers = controlers.length;
 		map = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		nPlayers = numberOfPlayers;
 		snakes = new Snake[numberOfPlayers];
 		score = new int[numberOfPlayers];
-		initSnakes();
+		initSnakes(controlers);
 		nextRound();
 	}
 	
@@ -59,9 +60,13 @@ public class World {
 		return map.getHeight();
 	}
 	
-	private void initSnakes() {
+	private void initSnakes(Controler[] controlers) {
 		for (int i = 0; i < nPlayers; i++) {
-			snakes[i] = new Snake(SnakeColor.getColor(i), controler);
+			try {
+				snakes[i] = new Snake(SnakeColor.getColor(i), controlers[i]);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -87,10 +92,10 @@ public class World {
 	}
 	
 	public void killSnake(int id) {
-		if (snakes[i].isAlive()) {
+		if (snakes[id].isAlive()) {
 			throw new IllegalArgumentException("Snake " + id + " is already dead.");
 		}
-		snakes[i].kill();
+		snakes[id].kill();
 		nAliveSnakes--;
 		for (int i = 0; i < nPlayers; i++) {
 			if (snakes[i].isAlive()) {

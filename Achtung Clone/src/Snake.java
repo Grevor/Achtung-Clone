@@ -1,11 +1,7 @@
 import java.awt.Color;
 
-import org.ejml.alg.dense.mult.MatrixMatrixMult;
-import org.ejml.alg.dense.mult.MatrixMultProduct;
-import org.ejml.alg.dense.mult.MatrixVectorMult;
 import org.ejml.alg.fixed.FixedOps2;
 import org.ejml.data.FixedMatrix2_64F;
-import org.ejml.ops.MatrixFeatures;
 
 
 public class Snake {
