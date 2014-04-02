@@ -1,19 +1,22 @@
 import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
-import org.ejml.alg.fixed.FixedOps2;
 import org.ejml.data.FixedMatrix2_64F;
 
 
 public class Snake {
 	private static double DEFAULT_SNAKE_RADIUS = 3;
-	private static double DEFAULT_SPEED = 2;
-	private static double DEFAULT_TURN_SPEED = 2;
-	FixedMatrix2_64F position, direction;
-	Color color;
-	double turnSpeed;
-	double snakeRadius;
-	boolean alive = true;
-	Controler control;
+	private static double DEFAULT_SPEED = 35.0 / Game.maxFPS;
+	private static double DEFAULT_TURN_SPEED = Math.PI / Game.maxFPS;
+	private FixedMatrix2_64F position, direction;
+	private Deque<FixedMatrix2_64F> lastPositions;
+	private Color color;
+	private double turnSpeed;
+	private double snakeRadius;
+	private boolean alive;
+	private Controler control;
 	
 	public Snake(Color c, Controler controler) {
 		this(c,controler, DEFAULT_SNAKE_RADIUS);
@@ -31,6 +34,7 @@ public class Snake {
 		this.alive = true;
 		turnSpeed = DEFAULT_TURN_SPEED;
 		this.snakeRadius = DEFAULT_SNAKE_RADIUS;
+		this.lastPositions = new ArrayDeque<FixedMatrix2_64F>(10);
 	}
 	
 	public int getColorAsRGB() {
@@ -38,7 +42,7 @@ public class Snake {
 	}
 
 	public double getSpeed() {
-		return Math.sqrt(FixedOps2.dot(direction, direction));
+		return VectorUtilities.getLength(direction);
 	}
 
 	public void setSpeed(double newSpeed) {
@@ -62,8 +66,21 @@ public class Snake {
 		return position.copy();
 	}
 	
+	public FixedMatrix2_64F getLastPosition() {
+		return lastPositions.peekLast().copy();
+	}
+	
+	public FixedMatrix2_64F popCollisionPosition() {
+		return lastPositions.poll();
+	}
+	
+	public FixedMatrix2_64F peekCollisionPosition() {
+		return lastPositions.peek();
+	}
+	
 	public void update() {
 		checkControler();
+		this.lastPositions.add((FixedMatrix2_64F) position.copy());
 		this.position.a1 += direction.a1;
 		this.position.a2 += direction.a2;
 	}
@@ -76,5 +93,13 @@ public class Snake {
 				direction = VectorUtilities.rotate(direction, turnSpeed);
 			}
 		}
+	}
+
+	public double getRadius() {
+		return this.snakeRadius;
+	}
+
+	public Color getColor() {
+		return color; 
 	}
 }
