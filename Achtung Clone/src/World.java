@@ -100,10 +100,10 @@ public class World {
 				FixedMatrix2_64F newPos = snakes[i].getPosition();
 				int x = (int)Math.round(newPos.get(0, 0));
 				int y = (int)Math.round(newPos.get(0, 1));
-				/*if (snakeCollides(snakes[i])) {
+				if (snakeCollides(snakes[i])) {
 					killSnake(i);
 				}
-				else {*/
+				else {
 					if(!snakes[i].hasHoleThisTick()) {
 						Point oldPosition = VectorUtilities.vectorToPoint(snakes[i].getLastPosition());
 						//map.setRGB(x, y, snakes[i].getColorAsRGB());
@@ -111,7 +111,7 @@ public class World {
 						g.setColor(snakes[i].getColor());
 						g.drawLine(x, y, oldPosition.x, oldPosition.y);
 					}
-				//}
+				}
 			}
 		}
 	}
@@ -133,7 +133,7 @@ public class World {
 			CollisionData currentCollisionData = snake.peekCollisionPosition();
 			if(currentCollisionData.isHole()) return;
 			Point thisCollisionPosition = VectorUtilities.vectorToPoint(currentCollisionData.getPosition());
-			g.setColor(Color.GRAY);
+			g.setColor(new Color(1));
 			g.setStroke(new BasicStroke((float)snake.getRadius(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 			g.drawLine(lastCollisionPos.x, lastCollisionPos.y, thisCollisionPosition.x, thisCollisionPosition.y);
 		}
@@ -145,8 +145,9 @@ public class World {
 		ArrayList<Point> allPoints = getCollisionPoints(center, radius);
 		for (int i = 0; i < allPoints.size(); i++) {
 			Point p = allPoints.get(i);
-			System.err.println(collisionMap.getRGB(p.x,  p.y));
-			if(collisionMap.getRGB(p.x, p.y) != 0) return true;
+			//System.err.println(collisionMap.getRGB(p.x,  p.y));
+			//Magic value! :D
+			if(collisionMap.getRGB(p.x, p.y) != -16777216) return true;
 		}
 		return false;
 	}

@@ -48,8 +48,10 @@ public class Game implements GameStartDataListener {
 		}
 	}
 	
-	private void createControllers() {
+	private boolean createControllers() {
 		int nPlayers = numberOfPlayers();
+		if (nPlayers < 1)
+			return false;
 		ListIterator<PlayerData> playerDataIter = playerData.listIterator();
 		controllers = new Controler[nPlayers];
 		int player = 0;
@@ -61,6 +63,7 @@ public class Game implements GameStartDataListener {
 				player++;
 			}
 		}
+		return true;
 	}
 	
 	private int numberOfPlayers() {
@@ -75,17 +78,20 @@ public class Game implements GameStartDataListener {
 	
 	@Override
 	public void start() {
-		createControllers();
-		world = new World(controllers, 800, 800); 
-				//gameWindow.getContentPane().getWidth(), gameWindow.getContentPane().getHeight());
-		gameWindow.displayGame(world.getBufferedImage());
-		new Thread( new Runnable() {
-			@Override
-			public void run() {
-				gameLoop();
-			}
-		}).start();
-		
+		if (createControllers()) {
+			world = new World(controllers, 800, 800); 
+			//gameWindow.getContentPane().getWidth(), gameWindow.getContentPane().getHeight());
+			gameWindow.displayGame(world.getBufferedImage());
+			new Thread( new Runnable() {
+				@Override
+				public void run() {
+					gameLoop();
+				}
+			}).start();
+		}
+		else {
+			//TODO: not enough players
+		}
 	}
 
 	@Override
