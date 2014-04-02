@@ -10,7 +10,8 @@ public class ShortcutKey implements KeyListener {
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if(this.shortcut == e.getKeyCode()) this.isPressed = true;
+		if(this.shortcut == e.getKeyCode()) 
+			this.isPressed = true;
 	}
 	
 	@Override

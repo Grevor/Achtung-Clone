@@ -22,8 +22,11 @@ public class World {
 
 	public World (Controler[] controlers, int width, int height) {
 		int numberOfPlayers = controlers.length;
-		map = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		collisionMap = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		if (numberOfPlayers < 1) {
+			throw new IllegalArgumentException("World need at least 1 player");
+		}
+		map = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		collisionMap = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		nPlayers = numberOfPlayers;
 		snakes = new Snake[numberOfPlayers];
 		score = new int[numberOfPlayers];
@@ -97,18 +100,18 @@ public class World {
 				FixedMatrix2_64F newPos = snakes[i].getPosition();
 				int x = (int)Math.round(newPos.get(0, 0));
 				int y = (int)Math.round(newPos.get(0, 1));
-				if (snakeCollides(snakes[i])) {
+				/*if (snakeCollides(snakes[i])) {
 					killSnake(i);
 				}
-				else {
-					if(snakes[i].hasHoleThisTick()) {
+				else {*/
+					if(!snakes[i].hasHoleThisTick()) {
 						Point oldPosition = VectorUtilities.vectorToPoint(snakes[i].getLastPosition());
 						//map.setRGB(x, y, snakes[i].getColorAsRGB());
 						g.setStroke(new BasicStroke((float)snakes[i].getRadius() * 2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 						g.setColor(snakes[i].getColor());
 						g.drawLine(x, y, oldPosition.x, oldPosition.y);
 					}
-				}
+				//}
 			}
 		}
 	}
@@ -142,6 +145,7 @@ public class World {
 		ArrayList<Point> allPoints = getCollisionPoints(center, radius);
 		for (int i = 0; i < allPoints.size(); i++) {
 			Point p = allPoints.get(i);
+			System.err.println(collisionMap.getRGB(p.x,  p.y));
 			if(collisionMap.getRGB(p.x, p.y) != 0) return true;
 		}
 		return false;
@@ -178,7 +182,7 @@ public class World {
 	}
 
 	public void killSnake(int id) {
-		if (snakes[id].isAlive()) {
+		if (!snakes[id].isAlive()) {
 			throw new IllegalArgumentException("Snake " + id + " is already dead.");
 		}
 		snakes[id].kill();
@@ -191,6 +195,10 @@ public class World {
 		if (nAliveSnakes < 2) {
 			endRound();
 		}
+	}
+
+	public BufferedImage getBufferedImage() {
+		return map;
 	}
 
 }

@@ -7,7 +7,7 @@ import org.ejml.data.FixedMatrix2_64F;
 
 
 public class Snake {
-	private static final double DEFAULT_SNAKE_RADIUS = 3;
+	private static final double DEFAULT_SNAKE_RADIUS = 1;
 	private static final double DEFAULT_SPEED = 35.0 / Game.maxFPS;
 	private static final double DEFAULT_TURN_SPEED = Math.PI / Game.maxFPS;
 	private static final long SNAKE_OPENING_CYCLE_LENGTH = 120;
@@ -83,7 +83,7 @@ public class Snake {
 	}
 	
 	public boolean hasHoleThisTick() {
-		return currentTick % SNAKE_OPENING_CYCLE_LENGTH > SNAKE_OPENING_TIME 
+		return currentTick % SNAKE_OPENING_CYCLE_LENGTH < SNAKE_OPENING_TIME 
 				&& !lastPositions.isEmpty();
 	}
 	
@@ -101,7 +101,7 @@ public class Snake {
 			if(control.turnClockwise()) {
 				direction = VectorUtilities.rotate(direction, turnSpeed);
 			} else if(control.turnCounterClockwise()) {
-				direction = VectorUtilities.rotate(direction, turnSpeed);
+				direction = VectorUtilities.rotate(direction, -turnSpeed);
 			}
 		}
 	}

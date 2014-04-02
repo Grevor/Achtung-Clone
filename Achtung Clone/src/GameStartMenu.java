@@ -4,6 +4,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ListIterator;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -11,17 +16,18 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 
-public class GameStartMenu extends JPanel {
-	private final static int maxPlayers = 6;
+public class GameStartMenu extends JPanel implements MouseListener {
 	private static final int padding = 15;
 	private final static Font titleFont = new Font("Helvectica", Font.PLAIN, 30);
 	private final static Color textColor = Color.white;
-	private final JTextField[] playerNames = new JTextField[maxPlayers];
-	private final JPanel playerPanel = new JPanel(new GridLayout(maxPlayers+1,3, padding,padding));
+	private final JTextField[] playerNames = new JTextField[Game.maxPlayers];
+	private final JPanel playerPanel = new JPanel(new GridLayout(Game.maxPlayers+1,3, padding,padding));
 	private final JButton start = new JButton("Start Game!");
+	private final GameStartDataListener startListener;
 	
-	public GameStartMenu() {
+	public GameStartMenu(GameStartDataListener startListener) {
 		super();
+		this.startListener = startListener;
 		this.setOpaque(false);
 		this.setBackground(Color.red);
 		this.setLayout(new GridBagLayout());
@@ -34,12 +40,7 @@ public class GameStartMenu extends JPanel {
 		gc.gridx = 0;
 		gc.gridy = 1;
 		this.add(start, gc);
-	}
-	
-	private void initTextFields() {
-		for (int i=0; i<maxPlayers; i++) {
-			playerNames[i].setText("Player"+(i+1));
-		}
+		start.addMouseListener(this);
 	}
 	
 	private void addTitles() {
@@ -56,23 +57,99 @@ public class GameStartMenu extends JPanel {
 	}
 	
 	private void addPlayers() {
-		final int offset = 1;
-		for (int player = 0; player < maxPlayers; player++) {
-			playerNames[player] = new JTextField("Player"+player);
+		ListIterator<PlayerData> playerDataIter = startListener.getPlayerData().listIterator();
+		for (int player = 0; player < Game.maxPlayers; player++) {
+			PlayerData playerData = playerDataIter.next();
+			playerNames[player] = new JTextField(playerData.getName());
 			playerNames[player].setForeground(PlayerColors.getColor(player));
 			playerPanel.add(playerNames[player]);
-			playerPanel.add(new HotkeyButton(player));
-			playerPanel.add(new HotkeyButton(player));
+			playerPanel.add(new HotkeyButton(player, playerData.getLeftKeyCode()));
+			playerPanel.add(new HotkeyButton(player, playerData.getRightKeyCode()));
 		}
 	}
 	
-	private class HotkeyButton extends JButton {
-		private int keyCode = 0;
+	private class HotkeyButton extends JButton implements KeyListener, MouseListener {
+		private KeyCode hotkey;
 		int playerIndex;
-		public HotkeyButton(int id) {
+		
+		public HotkeyButton(int id, KeyCode hotkey) {
 			super();
 			playerIndex = id;
+			this.hotkey = hotkey;
+			this.setText(KeyEvent.getKeyText(hotkey.keyCode));
 			setForeground(PlayerColors.getColor(id));
+			this.addMouseListener(this);
 		}
+		
+		@Override
+		public void keyPressed(KeyEvent arg0) {
+			hotkey.keyCode = arg0.getKeyCode();
+			this.removeKeyListener(this);
+			this.setText(KeyEvent.getKeyText(hotkey.keyCode));
+		}
+		
+		@Override
+		public void keyReleased(KeyEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void keyTyped(KeyEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void mouseClicked(MouseEvent arg0) {
+			this.addKeyListener(this);
+		}
+		@Override
+		public void mouseEntered(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void mouseExited(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void mousePressed(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void mouseReleased(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		startListener.start();
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }
