@@ -19,7 +19,7 @@ public class World {
 	private int nAliveSnakes;
 	private boolean	roundAlive;
 	private long currentTick;
-	
+
 	public World (Controler[] controlers, int width, int height) {
 		int numberOfPlayers = controlers.length;
 		map = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -30,7 +30,7 @@ public class World {
 		initSnakes(controlers);
 		nextRound();
 	}
-	
+
 	public void resetWorld() {
 		clearBufferedImage(map);
 		clearBufferedImage(collisionMap);
@@ -46,7 +46,7 @@ public class World {
 		g.clearRect(0, 0, image.getWidth(), image.getHeight());
 		g.dispose();
 	}
-	
+
 	public void nextRound() {
 		nAliveSnakes = nPlayers;
 		for (int i = 0; i < nPlayers; i++) {
@@ -57,23 +57,23 @@ public class World {
 		}
 		roundAlive = true;
 	}
-	
+
 	public void endRound() {
 		roundAlive = false;
 	}
-	
+
 	public boolean isAlive() {
 		return roundAlive;
 	}
-	
+
 	public int getWidth() {
 		return map.getWidth();
 	}
-	
+
 	public int getHeight() {
 		return map.getHeight();
 	}
-	
+
 	private void initSnakes(Controler[] controlers) {
 		for (int i = 0; i < nPlayers; i++) {
 			try {
@@ -83,14 +83,14 @@ public class World {
 			}
 		}
 	}
-	
+
 	public void update() {
 		if (!isAlive()) {
 			return;
 		}
 		currentTick++;
 		updateAllSnakes();
-		
+
 		Graphics2D g = map.createGraphics();
 		for (int i = 0; i < nPlayers; i++) {
 			if (snakes[i].isAlive()) {
@@ -101,11 +101,13 @@ public class World {
 					killSnake(i);
 				}
 				else {
-					Point oldPosition = VectorUtilities.vectorToPoint(snakes[i].getLastPosition());
-					//map.setRGB(x, y, snakes[i].getColorAsRGB());
-					g.setStroke(new BasicStroke((float)snakes[i].getRadius() * 2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-					g.setColor(snakes[i].getColor());
-					g.drawLine(x, y, oldPosition.x, oldPosition.y);
+					if(snakes[i].hasHoleThisTick()) {
+						Point oldPosition = VectorUtilities.vectorToPoint(snakes[i].getLastPosition());
+						//map.setRGB(x, y, snakes[i].getColorAsRGB());
+						g.setStroke(new BasicStroke((float)snakes[i].getRadius() * 2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+						g.setColor(snakes[i].getColor());
+						g.drawLine(x, y, oldPosition.x, oldPosition.y);
+					}
 				}
 			}
 		}
@@ -121,11 +123,13 @@ public class World {
 		}
 		g.dispose();
 	}
-	
+
 	private void updateCollision(Snake snake, Graphics2D g) {
 		if(collisionTickLag < currentTick) {
-			Point lastCollisionPos = VectorUtilities.vectorToPoint(snake.popCollisionPosition());
-			Point thisCollisionPosition = VectorUtilities.vectorToPoint(snake.peekCollisionPosition());
+			Point lastCollisionPos = VectorUtilities.vectorToPoint(snake.popCollisionPosition().getPosition());
+			CollisionData currentCollisionData = snake.peekCollisionPosition();
+			if(currentCollisionData.isHole()) return;
+			Point thisCollisionPosition = VectorUtilities.vectorToPoint(currentCollisionData.getPosition());
 			g.setColor(Color.GRAY);
 			g.setStroke(new BasicStroke((float)snake.getRadius(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 			g.drawLine(lastCollisionPos.x, lastCollisionPos.y, thisCollisionPosition.x, thisCollisionPosition.y);
@@ -142,7 +146,7 @@ public class World {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Gets all grid-points which are of interest when checking for collision.
 	 * @param center - The center of the object.
@@ -188,5 +192,5 @@ public class World {
 			endRound();
 		}
 	}
-	
+
 }
