@@ -6,15 +6,10 @@ public class LocalKeyboardControler implements Controler, KeyListener {
 
 	ShortcutKey clockwise;
 	ShortcutKey counterClockwise;
-	ShortcutKey back;
-	ShortcutKey pauseAndSelect;
 	
-	public LocalKeyboardControler(int clockwiseKeycode, int counterClockwiseKeycode, 
-			int pauseSelectKeycode, int backKeycode) {
+	public LocalKeyboardControler(int clockwiseKeycode, int counterClockwiseKeycode) {
 		this.clockwise = new ShortcutKey(clockwiseKeycode);
 		this.counterClockwise = new ShortcutKey(counterClockwiseKeycode);
-		back = new NonRepeatingShortcutKey(backKeycode);
-		pauseAndSelect = new NonRepeatingShortcutKey(pauseSelectKeycode);
 	}
 	
 	@Override
@@ -36,16 +31,12 @@ public class LocalKeyboardControler implements Controler, KeyListener {
 	public void keyPressed(KeyEvent e) {
 		this.clockwise.keyPressed(e);
 		this.counterClockwise.keyPressed(e);
-		this.back.keyPressed(e);
-		this.pauseAndSelect.keyPressed(e);
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		this.clockwise.keyReleased(e);
 		this.counterClockwise.keyReleased(e);
-		this.back.keyReleased(e);
-		this.pauseAndSelect.keyReleased(e);
 	}
 
 	@Override
@@ -53,12 +44,13 @@ public class LocalKeyboardControler implements Controler, KeyListener {
 
 	@Override
 	public boolean pauseAndSelectButton() {
-		return pauseAndSelect.isPressed();
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@Override
 	public boolean backButton() {
-		return this.back.isPressed();
+		// TODO Auto-generated method stub
+		return false;
 	}
-	
 }
