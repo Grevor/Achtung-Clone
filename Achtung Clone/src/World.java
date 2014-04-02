@@ -77,7 +77,7 @@ public class World {
 	private void initSnakes(Controler[] controlers) {
 		for (int i = 0; i < nPlayers; i++) {
 			try {
-				snakes[i] = new Snake(SnakeColor.getColor(i), controlers[i]);
+				snakes[i] = new Snake(PlayerColors.getColor(i), controlers[i]);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

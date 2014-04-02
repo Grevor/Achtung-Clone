@@ -1,7 +1,7 @@
 import java.awt.Color;
 
 
-public class SnakeColor {
+public class PlayerColors {
 	public static Color getColor(int id) throws OutOfColorsException {
 		switch (id) {
 			case 0: return Color.red;
@@ -15,7 +15,7 @@ public class SnakeColor {
 		}
 	}
 	
-	private static class OutOfColorsException extends Exception {
+	private static class OutOfColorsException extends Error {
 		
 	}
 }
