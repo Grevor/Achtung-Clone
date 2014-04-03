@@ -1,3 +1,4 @@
+package view;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -14,6 +15,8 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import core.Game;
 
 public class Window extends JFrame implements FocusListener, KeyListener {
 	private static final String	title					= "Achtung!";

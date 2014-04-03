@@ -1,4 +1,7 @@
+package model;
 import java.awt.Color;
+
+import controller.Controller;
 
 
 public class PlayerData {
@@ -6,7 +9,7 @@ public class PlayerData {
 	private int leftKC, rightKC;
 	private KeyCode leftKCinterface, rightKCinterface;
 	private int score;
-	private Controler control;
+	private Controller control;
 	private Color color;
 	private PlayerDataUpdateListener updateListener;
 	
@@ -69,9 +72,9 @@ public class PlayerData {
 	
 	public int getScore() { return score; }
 	
-	public void setControler(Controler c) { control = c; }
+	public void setControler(Controller c) { control = c; }
 	
-	public Controler getControler() { return control; }
+	public Controller getControler() { return control; }
 	
 	public void addUpdateListener(PlayerDataUpdateListener updateListener) {
 		if (this.updateListener != null) {

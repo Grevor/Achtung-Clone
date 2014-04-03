@@ -1,13 +1,14 @@
+package controller;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 
-public class LocalKeyboardControler implements Controler, KeyListener {
+public class LocalKeyboardController implements Controller, KeyListener {
 
 	ShortcutKey clockwise;
 	ShortcutKey counterClockwise;
 	
-	public LocalKeyboardControler(int clockwiseKeycode, int counterClockwiseKeycode) {
+	public LocalKeyboardController(int clockwiseKeycode, int counterClockwiseKeycode) {
 		this.clockwise = new ShortcutKey(clockwiseKeycode);
 		this.counterClockwise = new ShortcutKey(counterClockwiseKeycode);
 	}

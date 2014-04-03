@@ -1,10 +1,16 @@
+package model;
 import java.awt.Color;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.Random;
 
+import math.VectorUtilities;
+
 import org.ejml.data.FixedMatrix2_64F;
+
+import controller.Controller;
+import core.Game;
 
 
 public class Snake {
@@ -20,14 +26,14 @@ public class Snake {
 	private double turnSpeed;
 	private double snakeRadius;
 	private boolean alive;
-	private Controler control;
+	private Controller control;
 	private long currentTick;
 	
-	public Snake(Color c, Controler controler) {
+	public Snake(Color c, Controller controler) {
 		this(c,controler, DEFAULT_SNAKE_RADIUS);
 	}
 	
-	public Snake(Color color, Controler controler, double radius) {
+	public Snake(Color color, Controller controler, double radius) {
 		this.color = color;
 		this.control = controler;
 		snakeRadius = radius;

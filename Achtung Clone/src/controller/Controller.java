@@ -1,5 +1,6 @@
+package controller;
 
-public interface Controler {
+public interface Controller {
 	/**
 	 * Checks if the controller has been told to turn clockwise.
 	 * @return

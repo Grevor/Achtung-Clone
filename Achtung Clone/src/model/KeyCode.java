@@ -1,3 +1,4 @@
+package model;
 
 public interface KeyCode {
 	public abstract int getKeyCode();

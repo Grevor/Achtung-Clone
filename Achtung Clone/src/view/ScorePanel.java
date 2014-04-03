@@ -1,3 +1,4 @@
+package view;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -7,6 +8,10 @@ import java.util.LinkedList;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+
+import core.Game;
+import model.PlayerData;
+import model.PlayerDataUpdateListener;
 
 
 public class ScorePanel extends JPanel {

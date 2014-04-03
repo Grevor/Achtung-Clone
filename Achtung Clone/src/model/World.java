@@ -1,3 +1,4 @@
+package model;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -6,6 +7,8 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import math.VectorUtilities;
 
 import org.ejml.data.FixedMatrix2_64F;
 

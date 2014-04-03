@@ -1,3 +1,4 @@
+package math;
 import java.awt.Point;
 
 import org.ejml.alg.fixed.FixedOps2;

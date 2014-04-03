@@ -1,8 +1,16 @@
+package core;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
+
+import controller.LocalKeyboardController;
+import view.Window;
+import model.GameStartDataListener;
+import model.PlayerColors;
+import model.PlayerData;
+import model.World;
 
 
 public class Game implements GameStartDataListener {
@@ -57,8 +65,8 @@ public class Game implements GameStartDataListener {
 			PlayerData pd = iterator.next();
 			if (pd.isPlayerActivated()) {
 				pd.setControler(
-						new LocalKeyboardControler(pd.getRightKeyCode().getKeyCode(), pd.getLeftKeyCode().getKeyCode()));
-				gameWindow.addKeyListener((LocalKeyboardControler)pd.getControler());
+						new LocalKeyboardController(pd.getRightKeyCode().getKeyCode(), pd.getLeftKeyCode().getKeyCode()));
+				gameWindow.addKeyListener((LocalKeyboardController)pd.getControler());
 			}
 		}
 		return true;
@@ -78,7 +86,6 @@ public class Game implements GameStartDataListener {
 	public void start() {
 		if (createControllers()) {
 			world = new World(playersToArray(), 1000, 600); 
-			//gameWindow.getContentPane().getWidth(), gameWindow.getContentPane().getHeight());
 			gameWindow.displayGame(world.getBufferedImage());
 			restart();
 		}
