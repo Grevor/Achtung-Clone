@@ -1,5 +1,5 @@
 
-public class PlayerData implements ScoreUpdateListener {
+public class PlayerData {
 	private String name;
 	private KeyCode leftKC, rightKC;
 	private int score;
@@ -15,7 +15,7 @@ public class PlayerData implements ScoreUpdateListener {
 	
 	public void setName(String name) {
 		this.name = name;
-		nameListener.nameCHanged(name);
+		nameListener.nameChanged(name);
 	}
 	
 	public String getName() {

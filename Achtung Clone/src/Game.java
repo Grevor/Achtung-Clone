@@ -60,7 +60,7 @@ public class Game implements GameStartDataListener {
 			if (pd.bothKeysSet()) {
 				pd.setControler(
 						new LocalKeyboardControler(pd.getRightKeyCode().keyCode, pd.getLeftKeyCode().keyCode));
-				gameWindow.addKeyListener((LocalKeyboardControler)controllers[player]);
+				gameWindow.addKeyListener((LocalKeyboardControler)pd.getControler());
 				player++;
 			}
 		}
