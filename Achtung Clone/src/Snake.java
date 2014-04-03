@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.Random;
 
 import org.ejml.data.FixedMatrix2_64F;
@@ -45,6 +46,10 @@ public class Snake {
 		this.lastPositions = new ArrayDeque<CollisionData>(10);
 		this.currentTick = startingTickRandomizer.nextInt((int)(SNAKE_OPENING_CYCLE_LENGTH - SNAKE_OPENING_TIME)) 
 				+ SNAKE_OPENING_TIME;
+		//This is to make sure that the snake will be displayed at the very first frame, 
+		//to make sure everyone knows their direction at the start of the game.
+		//This will be incremented at the first update, and thus the value will once again be inside the specified bounds.
+		currentTick--;
 	}
 	
 	public int getColorAsRGB() {
@@ -91,6 +96,10 @@ public class Snake {
 	public boolean hasHoleThisTick() {
 		return currentTick % SNAKE_OPENING_CYCLE_LENGTH < SNAKE_OPENING_TIME 
 				&& !lastPositions.isEmpty();
+	}
+	
+	public Iterator<CollisionData> getLastPositionsIterator() {
+		return lastPositions.iterator();
 	}
 	
 	public void update() {
