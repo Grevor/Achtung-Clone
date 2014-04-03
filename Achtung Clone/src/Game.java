@@ -13,6 +13,7 @@ public class Game implements GameStartDataListener {
 	private final Window gameWindow;
 	private LinkedList<PlayerData> playerData;
 	private World world;
+	private boolean running = false;
 	
 	public Game () {
 		playerData = new LinkedList<PlayerData>();
@@ -31,13 +32,14 @@ public class Game implements GameStartDataListener {
 		long timeDiff = 0;
 		long workTime = 0;
 		while(world.isAlive()) {
+			
 			gameWindow.repaint();
 			newTime = System.nanoTime();
 			timeDiff = newTime - previousTime;
 			workTime += timeDiff;
 			previousTime = newTime;
 			while(workTime >= 0) {
-				world.update();
+				if(this.running) world.update();
 				workTime -= nsPerFrame;
 			}
 			try {
@@ -79,16 +81,37 @@ public class Game implements GameStartDataListener {
 			world = new World(playersToArray(), 800, 800); 
 			//gameWindow.getContentPane().getWidth(), gameWindow.getContentPane().getHeight());
 			gameWindow.displayGame(world.getBufferedImage());
-			new Thread( new Runnable() {
-				@Override
-				public void run() {
-					gameLoop();
-				}
-			}).start();
+			restart();
 		}
 		else {
 			//TODO: not enough players
 		}
+	}
+
+	public void restart() {
+		this.resume();
+		world.resetWorld();
+		world.update();
+		pause();
+		new Thread( new Runnable() {
+			@Override
+			public void run() {
+				gameLoop();
+			}
+		}).start();
+	}
+	
+	public boolean gameEnded() {
+		if(world == null) return false;
+		else return !world.isAlive();
+	}
+	
+	public void pause() {
+		this.running = false;
+	}
+	
+	public void resume() {
+		this.running = true;
 	}
 
 	private PlayerData[] playersToArray() {
@@ -103,5 +126,12 @@ public class Game implements GameStartDataListener {
 	@Override
 	public LinkedList<PlayerData> getPlayerData() {
 		return playerData;
+	}
+
+	public void stop() {
+		world.kill();
+		for(PlayerData d : playerData) {
+			d.resetScore();
+		}
 	}
 }

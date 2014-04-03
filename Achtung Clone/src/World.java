@@ -11,7 +11,7 @@ import org.ejml.data.FixedMatrix2_64F;
 
 public class World {
 	private static double wallSpawnOffset = 10;
-	private static final int collisionTickLag = (int)(4.8 * Snake.DEFAULT_SNAKE_RADIUS);
+	private static final int collisionTickLag = (int)(4.5 * Snake.DEFAULT_SNAKE_RADIUS);
 	private final BufferedImage map, collisionMap;
 	private int nPlayers;
 	private PlayerData[] players;
@@ -177,7 +177,7 @@ public class World {
 			if(currentCollisionData.isHole()) return;
 			Point thisCollisionPosition = VectorUtilities.vectorToPoint(currentCollisionData.getPosition());
 			g.setColor(new Color(1));
-			g.setStroke(new BasicStroke((float)snake.getRadius(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+			g.setStroke(new BasicStroke((float)snake.getRadius() * 2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 			g.drawLine(lastCollisionPos.x, lastCollisionPos.y, thisCollisionPosition.x, thisCollisionPosition.y);
 		}
 	}
@@ -243,6 +243,11 @@ public class World {
 
 	public BufferedImage getBufferedImage() {
 		return map;
+	}
+
+	public void kill() {
+		// TODO Auto-generated method stub
+		this.roundAlive = false;
 	}
 
 }
