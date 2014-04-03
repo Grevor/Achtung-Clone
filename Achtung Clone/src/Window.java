@@ -3,8 +3,8 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.WindowAdapter;
@@ -58,7 +58,14 @@ public class Window extends JFrame implements FocusListener {
 		mainMenu = new MainMenu();
 		gameStartMenu = new GameStartMenu(game);
 		gamePanel = new JPanel();
+		gamePanel.setOpaque(false);
+		gamePanel.setLayout(new GridBagLayout());
 		gamePanel.setBorder(new EmptyBorder(0,0,0,0));
+		ScorePanel scorePanel = new ScorePanel();
+		scorePanel.setPlayerData(game.getPlayerData());
+		GridBagConstraints gc = new GridBagConstraints();
+		gc.gridx = 1;
+		gamePanel.add(scorePanel, gc);
 		gamePanel.setFocusable(false);
 		gamePanel.addFocusListener(this);
 	}
@@ -120,7 +127,9 @@ public class Window extends JFrame implements FocusListener {
 
 	public void displayGame(BufferedImage bufferedImage) {
 		// TODO Auto-generated method stub
-		gamePanel.add(new JLabel(new ImageIcon(bufferedImage)));
+		GridBagConstraints gc = new GridBagConstraints();
+		gc.gridx = 0;
+		gamePanel.add(new JLabel(new ImageIcon(bufferedImage)), gc);
 		setState(GUIState.IN_GAME_PAUSED);
 		this.requestFocus();
 	}

@@ -17,6 +17,7 @@ public class ScorePanel extends JPanel {
 	
 	public ScorePanel() {
 		super();
+		this.setOpaque(false);
 		nameLabels = new NameLabel[Game.maxPlayers];
 		scoreLabels = new ScoreLabel[Game.maxPlayers];
 		this.setLayout(new GridLayout(1+Game.maxPlayers, 2, padding, padding));
@@ -69,6 +70,7 @@ public class ScorePanel extends JPanel {
 			this.setForeground(pd.getColor());
 			subscription = pd;
 			pd.addScoreListener(this);
+			this.setText(Integer.toString(pd.getScore()));
 		}
 		
 		public void desubscribe() {
@@ -96,6 +98,7 @@ public class ScorePanel extends JPanel {
 			this.setForeground(pd.getColor());
 			subscription = pd;
 			pd.setNameListener(this);
+			this.setText(pd.getName());
 		}
 		
 		public void desubscribe() {
