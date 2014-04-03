@@ -35,12 +35,16 @@ public class Snake {
 
 	public void respawn(double x, double y) {
 		position = new FixedMatrix2_64F(x, y);
-		direction = new FixedMatrix2_64F(DEFAULT_SPEED, 0);
+		double angle = startingTickRandomizer.nextDouble() * Math.PI * 2;
+		direction = new FixedMatrix2_64F(
+				Math.cos(angle) * DEFAULT_SPEED, 
+				Math.sin(angle) * DEFAULT_SPEED);
 		this.alive = true;
 		turnSpeed = DEFAULT_TURN_SPEED;
 		this.snakeRadius = DEFAULT_SNAKE_RADIUS;
 		this.lastPositions = new ArrayDeque<CollisionData>(10);
-		this.currentTick = startingTickRandomizer.nextInt((int)SNAKE_OPENING_CYCLE_LENGTH);
+		this.currentTick = startingTickRandomizer.nextInt((int)(SNAKE_OPENING_CYCLE_LENGTH - SNAKE_OPENING_TIME)) 
+				+ SNAKE_OPENING_TIME;
 	}
 	
 	public int getColorAsRGB() {
