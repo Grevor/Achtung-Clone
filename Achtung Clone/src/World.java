@@ -10,7 +10,7 @@ import org.ejml.data.FixedMatrix2_64F;
 
 
 public class World {
-	private static double wallSpawnOffset = Snake.getTurnRadius() + Snake.DEFAULT_SNAKE_RADIUS;
+	private static double wallSpawnOffset = Snake.getTurnRadius() + Snake.DEFAULT_SNAKE_RADIUS * 2;
 	private static final int collisionTickLag = (int)(4.5 * Snake.DEFAULT_SNAKE_RADIUS);
 	private final BufferedImage map, collisionMap;
 	private int nPlayers;
