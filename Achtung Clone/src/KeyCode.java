@@ -1,7 +1,5 @@
 
-public class KeyCode {
-	public int keyCode;
-	public KeyCode(int kc) {
-		keyCode = kc;
-	}
+public interface KeyCode {
+	public abstract int getKeyCode();
+	public abstract void setKeyCode(int keyCode);
 }

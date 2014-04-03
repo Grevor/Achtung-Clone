@@ -3,18 +3,20 @@ import java.awt.Color;
 
 public class PlayerData {
 	private String name;
-	private KeyCode leftKC, rightKC;
+	private int leftKC, rightKC;
+	private KeyCode leftKCinterface, rightKCinterface;
 	private int score;
 	private Controler control;
 	private Color color;
-	private ScoreUpdateListener scoreListener;
-	private NameUpdateListener nameListener;
+	private PlayerDataUpdateListener updateListener;
 	
 	public PlayerData(String name, Color color, int leftKeyCode, int rightKeyCode) {
 		this.name = name;
 		this.color = color;
-		leftKC = new KeyCode(leftKeyCode);
-		rightKC = new KeyCode(rightKeyCode);
+		leftKC = leftKeyCode;
+		rightKC = rightKeyCode;
+		leftKCinterface = new LeftKeyCode();
+		rightKCinterface = new RightKeyCode();
 		score = 0;
 	}
 	
@@ -28,7 +30,7 @@ public class PlayerData {
 	
 	public void setName(String name) {
 		this.name = name;
-		nameListener.nameChanged(name);
+		updateListener.nameChanged(name);
 	}
 	
 	public String getName() {
@@ -36,25 +38,33 @@ public class PlayerData {
 	}
 	
 	public KeyCode getLeftKeyCode() {
-		return leftKC;
+		return leftKCinterface;
 	}
 	
 	public KeyCode getRightKeyCode() {
-		return rightKC;
+		return rightKCinterface;
 	}
 	
-	public boolean bothKeysSet() {
-		return leftKC.keyCode != 0 && rightKC.keyCode != 0;
+	private void announceIfActiveStateChanged(boolean wasActive) {
+		boolean isActive = isPlayerActivated();
+		if (wasActive == false && isActive)
+			updateListener.activated();
+		else if (wasActive && isActive == false)
+			updateListener.deactivated();
+	}
+	
+	public boolean isPlayerActivated() {
+		return leftKC != 0 && rightKC != 0;
 	}
 	
 	public void incrementScore(int increment) {
 		score += increment;
-		scoreListener.scoreChanged(score);
+		updateListener.scoreChanged(score);
 	}
 	
 	public void resetScore() {
 		score = 0;
-		scoreListener.scoreChanged(score);
+		updateListener.scoreChanged(score);
 	}
 	
 	public int getScore() { return score; }
@@ -63,15 +73,46 @@ public class PlayerData {
 	
 	public Controler getControler() { return control; }
 	
-	public void addScoreListener(ScoreUpdateListener l) {
-		scoreListener = l;
+	public void addUpdateListener(PlayerDataUpdateListener updateListener) {
+		if (this.updateListener != null) {
+			throw new Error("This PlayerDataObject already has a update listener.");
+		}
+		this.updateListener = updateListener;
 	}
 	
-	public void clearScoreUpdateListener(ScoreUpdateListener l) {
-		scoreListener = null;
+	public void clearUpdateListener() {
+		this.updateListener = null;
 	}
 	
-	public void setNameListener(NameUpdateListener l) { this.nameListener = l; }
+	private class LeftKeyCode implements KeyCode {
+
+		@Override
+		public int getKeyCode() {
+			return leftKC;
+		}
+
+		@Override
+		public void setKeyCode(int keyCode) {
+			boolean wasActivated = isPlayerActivated();
+			leftKC = keyCode;
+			announceIfActiveStateChanged(wasActivated);
+		}
+		
+	}
 	
-	public void clearNameListener() { nameListener = null; }
+	private class RightKeyCode implements KeyCode {
+
+		@Override
+		public int getKeyCode() {
+			return rightKC;
+		}
+
+		@Override
+		public void setKeyCode(int keyCode) {
+			boolean wasActivated = isPlayerActivated();
+			rightKC = keyCode;
+			announceIfActiveStateChanged(wasActivated);
+		}
+		
+	}
 }

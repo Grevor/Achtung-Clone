@@ -14,11 +14,13 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 
 public class GameStartMenu extends JPanel implements MouseListener {
-	private static final int padding = 15;
+	private final static int padding = 15;
 	private final static Font titleFont = new Font("Helvectica", Font.PLAIN, 30);
+	private final static Font playerFont = new Font("Helvectica", Font.BOLD, 15);
 	private final static Color textColor = Color.white;
 	private final JTextField[] playerNames = new JTextField[Game.maxPlayers];
 	private final JPanel playerPanel = new JPanel(new GridLayout(Game.maxPlayers+1,3, padding,padding));
@@ -50,7 +52,7 @@ public class GameStartMenu extends JPanel implements MouseListener {
 	}
 	
 	private JLabel newTitleLabel(String text) {
-		final JLabel lbl = new JLabel(text);
+		final JLabel lbl = new JLabel(text, SwingConstants.CENTER);
 		lbl.setForeground(textColor);
 		lbl.setFont(titleFont);
 		return lbl;
@@ -62,23 +64,30 @@ public class GameStartMenu extends JPanel implements MouseListener {
 			PlayerData playerData = playerDataIter.next();
 			playerNames[player] = new JTextField(playerData.getName());
 			playerNames[player].setForeground(PlayerColors.getColor(player));
+			playerNames[player].setFont(playerFont);
+			playerNames[player].setHorizontalAlignment(JTextField.CENTER);
+			playerNames[player].setOpaque(false);
 			playerPanel.add(playerNames[player]);
-			playerPanel.add(new HotkeyButton(player, playerData.getLeftKeyCode()));
-			playerPanel.add(new HotkeyButton(player, playerData.getRightKeyCode()));
+			playerPanel.add(new HotkeyButton(playerData.getColor(), playerData.getLeftKeyCode()));
+			playerPanel.add(new HotkeyButton(playerData.getColor(), playerData.getRightKeyCode()));
 		}
 	}
 	
 	private class HotkeyButton extends JButton implements KeyListener, MouseListener {
 		private KeyCode hotkey;
-		int playerIndex;
 		
-		public HotkeyButton(int id, KeyCode hotkey) {
+		public HotkeyButton(Color color, KeyCode hotkey) {
 			super();
-			playerIndex = id;
+			setFocusPainted(false);
+      setMargin(new Insets(0, 0, 0, 0));
+      setContentAreaFilled(false);
+      //setBorderPainted(false);
+      setOpaque(false);
+      
 			this.hotkey = hotkey;
-			if(hotkey.keyCode == 0) this.setText("");
-			else this.setText(KeyEvent.getKeyText(hotkey.keyCode));
-			setForeground(PlayerColors.getColor(id));
+			if(hotkey.getKeyCode() == 0) this.setText("");
+			else this.setText(KeyEvent.getKeyText(hotkey.getKeyCode()));
+			setForeground(color);
 			this.addMouseListener(this);
 		}
 		
@@ -89,12 +98,12 @@ public class GameStartMenu extends JPanel implements MouseListener {
 				case KeyEvent.VK_SPACE:
 					break;
 				case KeyEvent.VK_ESCAPE:
-					hotkey.keyCode = 0;
+					hotkey.setKeyCode(0);
 					this.setText("");
 					break;
 				default:
-					hotkey.keyCode = arg0.getKeyCode();
-					this.setText(KeyEvent.getKeyText(hotkey.keyCode));
+					hotkey.setKeyCode(arg0.getKeyCode());
+					this.setText(KeyEvent.getKeyText(hotkey.getKeyCode()));
 			}
 			this.removeKeyListener(this);
 		}

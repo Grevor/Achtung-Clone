@@ -7,7 +7,7 @@ public class PlayerColors {
 			case 0: return Color.red;
 			case 1: return Color.blue;
 			case 2: return Color.green;
-			case 3: return Color.pink;
+			case 3: return Color.magenta;
 			case 4: return Color.orange;
 			case 5: return Color.cyan;
 			default:

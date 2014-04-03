@@ -17,10 +17,10 @@ public class Game implements GameStartDataListener {
 	
 	public Game () {
 		playerData = new LinkedList<PlayerData>();
-		playerData.add(new PlayerData("Player 1", PlayerColors.getColor(0), KeyEvent.VK_Z, KeyEvent.VK_X));
-		playerData.add(new PlayerData("Player 2", PlayerColors.getColor(1), KeyEvent.VK_PERIOD, KeyEvent.VK_MINUS));
+		playerData.add(new PlayerData("Player1", PlayerColors.getColor(0), KeyEvent.VK_Z, KeyEvent.VK_X));
+		playerData.add(new PlayerData("Player2", PlayerColors.getColor(1), KeyEvent.VK_PERIOD, KeyEvent.VK_MINUS));
 		for (int player = 2; player < maxPlayers; player++) {
-				playerData.add(new PlayerData("Player "+(player+1), PlayerColors.getColor(player), 0,0));
+				playerData.add(new PlayerData("Player"+(player+1), PlayerColors.getColor(player), 0,0));
 		}
 		gameWindow = new Window(this);
 	}
@@ -55,9 +55,9 @@ public class Game implements GameStartDataListener {
 			return false;
 		for (Iterator<PlayerData> iterator = playerData.iterator(); iterator.hasNext();) {
 			PlayerData pd = iterator.next();
-			if (pd.bothKeysSet()) {
+			if (pd.isPlayerActivated()) {
 				pd.setControler(
-						new LocalKeyboardControler(pd.getRightKeyCode().keyCode, pd.getLeftKeyCode().keyCode));
+						new LocalKeyboardControler(pd.getRightKeyCode().getKeyCode(), pd.getLeftKeyCode().getKeyCode()));
 				gameWindow.addKeyListener((LocalKeyboardControler)pd.getControler());
 			}
 		}
@@ -68,7 +68,7 @@ public class Game implements GameStartDataListener {
 		ListIterator<PlayerData> playerDataIter = playerData.listIterator();
 		int nPlayers = 0;
 		while(playerDataIter.hasNext()) {
-			if (playerDataIter.next().bothKeysSet())
+			if (playerDataIter.next().isPlayerActivated())
 				nPlayers++;
 		}
 		return nPlayers;
@@ -119,7 +119,7 @@ public class Game implements GameStartDataListener {
 		ArrayList<PlayerData> ret= new ArrayList<PlayerData>();
 		for (Iterator<PlayerData> iter = playerData.iterator(); iter.hasNext();) {
 			PlayerData pd = iter.next();
-			if(pd.bothKeysSet()) ret.add(pd);
+			if(pd.isPlayerActivated()) ret.add(pd);
 		}
 		return (PlayerData[]) ret.toArray(new PlayerData[numberOfPlayers()]);
 	}

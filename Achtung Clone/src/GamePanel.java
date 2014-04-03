@@ -28,6 +28,9 @@ public class GamePanel extends JPanel {
 	private void setUpGameImageField() {
 		GridBagConstraints gc = new GridBagConstraints();
 		gc.gridx = 0;
+		gc.insets = new Insets(10, 10, 10, 10);
+		gc.fill = GridBagConstraints.HORIZONTAL;
+		gc.weightx = 1;
 		this.add(new JLabel(gameImage = new ImageIcon()), gc);
 	}
 	
