@@ -15,6 +15,19 @@ public class PlayerColors {
 		}
 	}
 	
+	public static Color getSnakeHeadColor(int id) {
+		switch (id) {
+		case 0: return Color.white;
+		case 1: return Color.white;
+		case 2: return Color.white;
+		case 3: return Color.white;
+		case 4: return Color.white;
+		case 5: return Color.white;
+		default:
+			throw new OutOfColorsException();
+	}
+	}
+	
 	private static class OutOfColorsException extends Error {
 		
 	}

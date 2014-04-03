@@ -76,7 +76,8 @@ public class GameStartMenu extends JPanel implements MouseListener {
 			super();
 			playerIndex = id;
 			this.hotkey = hotkey;
-			this.setText(KeyEvent.getKeyText(hotkey.keyCode));
+			if(hotkey.keyCode == 0) this.setText("");
+			else this.setText(KeyEvent.getKeyText(hotkey.keyCode));
 			setForeground(PlayerColors.getColor(id));
 			this.addMouseListener(this);
 		}

@@ -1,18 +1,19 @@
 import java.awt.Color;
-import java.awt.event.KeyEvent;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Random;
 
 import org.ejml.data.FixedMatrix2_64F;
 
 
 public class Snake {
-	private static final double DEFAULT_SNAKE_RADIUS = 1;
-	private static final double DEFAULT_SPEED = 35.0 / Game.maxFPS;
-	private static final double DEFAULT_TURN_SPEED = Math.PI / Game.maxFPS;
+	public static final double DEFAULT_SNAKE_RADIUS = 3;
+	private static final double DEFAULT_SPEED = 60.0 / Game.maxFPS;
+	private static final double DEFAULT_TURN_SPEED = Math.PI / Game.maxFPS * .6;
 	private static final long SNAKE_OPENING_CYCLE_LENGTH = 120;
 	private static final long SNAKE_OPENING_TIME = 20;
-	private FixedMatrix2_64F position, direction, preHolePosition;
+	private static Random startingTickRandomizer = new Random();
+	private FixedMatrix2_64F position, direction;
 	private Deque<CollisionData> lastPositions;
 	private Color color;
 	private double turnSpeed;
@@ -20,7 +21,6 @@ public class Snake {
 	private boolean alive;
 	private Controler control;
 	private long currentTick;
-	private boolean nextCycleIsNoHole = false, lastCycleWasHole = false;
 	
 	public Snake(Color c, Controler controler) {
 		this(c,controler, DEFAULT_SNAKE_RADIUS);
@@ -39,6 +39,7 @@ public class Snake {
 		turnSpeed = DEFAULT_TURN_SPEED;
 		this.snakeRadius = DEFAULT_SNAKE_RADIUS;
 		this.lastPositions = new ArrayDeque<CollisionData>(10);
+		this.currentTick = startingTickRandomizer.nextInt((int)SNAKE_OPENING_CYCLE_LENGTH);
 	}
 	
 	public int getColorAsRGB() {
@@ -93,7 +94,7 @@ public class Snake {
 				new CollisionData((FixedMatrix2_64F) position.copy(),this.hasHoleThisTick()));
 		this.position.a1 += direction.a1;
 		this.position.a2 += direction.a2;
-		this.currentTick++;
+		currentTick++;
 	}
 
 	private void checkControler() {
