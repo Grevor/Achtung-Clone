@@ -5,6 +5,7 @@ public class PlayerData implements ScoreUpdateListener {
 	private int score;
 	private Controler control;
 	private ScoreUpdateListener scoreListener;
+	private NameUpdateListener nameListener;
 	public PlayerData(String name, int leftKeyCode, int rightKeyCode) {
 		this.name = name;
 		leftKC = new KeyCode(leftKeyCode);
@@ -14,6 +15,7 @@ public class PlayerData implements ScoreUpdateListener {
 	
 	public void setName(String name) {
 		this.name = name;
+		nameListener.nameCHanged(name);
 	}
 	
 	public String getName() {
@@ -34,10 +36,12 @@ public class PlayerData implements ScoreUpdateListener {
 	
 	public void incrementScore(int increment) {
 		score += increment;
+		scoreListener.scoreChanged(score);
 	}
 	
 	public void resetScore() {
 		score = 0;
+		scoreListener.scoreChanged(score);
 	}
 	
 	public int getScore() { return score; }
@@ -53,4 +57,8 @@ public class PlayerData implements ScoreUpdateListener {
 	public void clearScoreUpdateListener(ScoreUpdateListener l) {
 		scoreListener = null;
 	}
+	
+	public void setNameListener(NameUpdateListener l) { this.nameListener = l; }
+	
+	public void clearNameListener() { nameListener = null; }
 }
