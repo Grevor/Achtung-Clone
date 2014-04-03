@@ -12,7 +12,6 @@ public class Game implements GameStartDataListener {
 	
 	private final Window gameWindow;
 	private LinkedList<PlayerData> playerData;
-	private Controler[] controllers;
 	private World world;
 	
 	public Game () {
@@ -53,15 +52,12 @@ public class Game implements GameStartDataListener {
 		int nPlayers = numberOfPlayers();
 		if (nPlayers < 1)
 			return false;
-		controllers = new Controler[nPlayers];
-		int player = 0;
 		for (Iterator<PlayerData> iterator = playerData.iterator(); iterator.hasNext();) {
 			PlayerData pd = iterator.next();
 			if (pd.bothKeysSet()) {
 				pd.setControler(
 						new LocalKeyboardControler(pd.getRightKeyCode().keyCode, pd.getLeftKeyCode().keyCode));
 				gameWindow.addKeyListener((LocalKeyboardControler)pd.getControler());
-				player++;
 			}
 		}
 		return true;
@@ -96,10 +92,9 @@ public class Game implements GameStartDataListener {
 	}
 
 	private PlayerData[] playersToArray() {
-		int i = 0;
 		ArrayList<PlayerData> ret= new ArrayList<PlayerData>();
-		for (Iterator iter = playerData.iterator(); iter.hasNext(); i++) {
-			PlayerData pd = (PlayerData) iter.next();
+		for (Iterator<PlayerData> iter = playerData.iterator(); iter.hasNext();) {
+			PlayerData pd = iter.next();
 			if(pd.bothKeysSet()) ret.add(pd);
 		}
 		return (PlayerData[]) ret.toArray(new PlayerData[numberOfPlayers()]);
