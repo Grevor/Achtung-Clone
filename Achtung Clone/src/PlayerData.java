@@ -1,16 +1,29 @@
+import java.awt.Color;
+
 
 public class PlayerData {
 	private String name;
 	private KeyCode leftKC, rightKC;
 	private int score;
 	private Controler control;
+	private Color color;
 	private ScoreUpdateListener scoreListener;
 	private NameUpdateListener nameListener;
-	public PlayerData(String name, int leftKeyCode, int rightKeyCode) {
+	
+	public PlayerData(String name, Color color, int leftKeyCode, int rightKeyCode) {
 		this.name = name;
+		this.color = color;
 		leftKC = new KeyCode(leftKeyCode);
 		rightKC = new KeyCode(rightKeyCode);
 		score = 0;
+	}
+	
+	public void setColor(Color color) {
+		this.color = color;
+	}
+	
+	public Color getColor() {
+		return color;
 	}
 	
 	public void setName(String name) {
