@@ -17,10 +17,9 @@ public class Game implements GameStartDataListener {
 	
 	public Game () {
 		playerData = new LinkedList<PlayerData>();
-		for (int player = 0; player < maxPlayers; player++) {
-			if (player == 0)
-				playerData.add(new PlayerData("Bängen spanar", PlayerColors.getColor(player), KeyEvent.VK_Q, KeyEvent.VK_W));
-			else
+		playerData.add(new PlayerData("Player 1", PlayerColors.getColor(0), KeyEvent.VK_Z, KeyEvent.VK_X));
+		playerData.add(new PlayerData("Player 2", PlayerColors.getColor(1), KeyEvent.VK_PERIOD, KeyEvent.VK_MINUS));
+		for (int player = 2; player < maxPlayers; player++) {
 				playerData.add(new PlayerData("Player "+(player+1), PlayerColors.getColor(player), 0,0));
 		}
 		gameWindow = new Window(this);

@@ -95,11 +95,11 @@ public class Snake {
 	
 	public void update() {
 		checkControler();
+		currentTick++;
 		this.lastPositions.add(
 				new CollisionData((FixedMatrix2_64F) position.copy(),this.hasHoleThisTick()));
 		this.position.a1 += direction.a1;
 		this.position.a2 += direction.a2;
-		currentTick++;
 	}
 
 	private void checkControler() {

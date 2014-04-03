@@ -84,9 +84,19 @@ public class GameStartMenu extends JPanel implements MouseListener {
 		
 		@Override
 		public void keyPressed(KeyEvent arg0) {
-			hotkey.keyCode = arg0.getKeyCode();
+			switch(arg0.getKeyCode()) {
+				case 0:
+				case KeyEvent.VK_SPACE:
+					break;
+				case KeyEvent.VK_ESCAPE:
+					hotkey.keyCode = 0;
+					this.setText("");
+					break;
+				default:
+					hotkey.keyCode = arg0.getKeyCode();
+					this.setText(KeyEvent.getKeyText(hotkey.keyCode));
+			}
 			this.removeKeyListener(this);
-			this.setText(KeyEvent.getKeyText(hotkey.keyCode));
 		}
 		
 		@Override
