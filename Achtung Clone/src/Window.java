@@ -3,9 +3,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -14,24 +12,18 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 
 public class Window extends JFrame implements FocusListener, KeyListener {
 	private static final String	title					= "Achtung!";
 	private GraphicsDevice			screen				= GraphicsEnvironment.getLocalGraphicsEnvironment()
-			.getDefaultScreenDevice();
+																								.getDefaultScreenDevice();
 	private boolean							isFullScreen	= false;
 	private GUIState						state;
-	private JPanel							mainMenu, gameStartMenu, gamePanel;
+	private JPanel							mainMenu, gameStartMenu;
+	private GamePanel						gamePanel;
 	private Game								game;
-	private boolean alreadyInitializedGamePanel;
-
-	private class UnknownGUIStateException extends Exception {
-	}
 
 	private enum GUIState {
 		MAIN_MENU, GAME_START_MENU, IN_GAME_PAUSED, IN_GAME_PLAYING;
@@ -62,24 +54,7 @@ public class Window extends JFrame implements FocusListener, KeyListener {
 	private void createMenus() {
 		mainMenu = new MainMenu();
 		gameStartMenu = new GameStartMenu(game);
-		gamePanel = new JPanel();
-		gamePanel.setOpaque(false);
-		gamePanel.setLayout(new GridBagLayout());
-		gamePanel.setBorder(new EmptyBorder(0,0,0,0));
-		setUpScorePanel();
-		gamePanel.setFocusable(false);
-		gamePanel.addFocusListener(this);
-	}
-
-	private void setUpScorePanel() {
-		ScorePanel scorePanel = new ScorePanel();
-		scorePanel.setPlayerData(game.getPlayerData());
-		GridBagConstraints gc = new GridBagConstraints();
-		gc.gridx = 1;
-		gc.insets = new Insets(10,10,10,10);
-		gc.fill = GridBagConstraints.HORIZONTAL;
-		gc.weightx = 1;
-		gamePanel.add(scorePanel, gc);
+		gamePanel = new GamePanel(game.getPlayerData());
 	}
 
 	private void setState(GUIState newState) {
@@ -98,15 +73,15 @@ public class Window extends JFrame implements FocusListener, KeyListener {
 
 	private JPanel getMenu(GUIState state) {
 		switch (state) {
-		case MAIN_MENU:
-			return mainMenu;
-		case GAME_START_MENU:
-			return gameStartMenu;
-		case IN_GAME_PAUSED:
-		case IN_GAME_PLAYING:
-			return gamePanel;
-		default:
-			throw new IllegalArgumentException("Unknow/unimplemented GUIState.");
+			case MAIN_MENU:
+				return mainMenu;
+			case GAME_START_MENU:
+				return gameStartMenu;
+			case IN_GAME_PAUSED:
+			case IN_GAME_PLAYING:
+				return gamePanel;
+			default:
+				throw new IllegalArgumentException("Unknow/unimplemented GUIState.");
 		}
 	}
 
@@ -139,12 +114,7 @@ public class Window extends JFrame implements FocusListener, KeyListener {
 	}
 
 	public void displayGame(BufferedImage bufferedImage) {
-		// TODO Auto-generated method stub
-		GridBagConstraints gc = new GridBagConstraints();
-		gc.gridx = 0;
-		gamePanel.removeAll();
-		setUpScorePanel();
-		gamePanel.add(new JLabel(new ImageIcon(bufferedImage)), gc);
+		gamePanel.setGameField(bufferedImage);
 		setState(GUIState.IN_GAME_PAUSED);
 		this.requestFocus();
 		this.repaint();
@@ -162,19 +132,22 @@ public class Window extends JFrame implements FocusListener, KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent arg0) {
-		if(arg0.getKeyCode() == KeyEvent.VK_SPACE) {
-			if(game.gameEnded()) {
+		if (arg0.getKeyCode() == KeyEvent.VK_SPACE) {
+			if (game.gameEnded()) {
 				game.restart();
 				this.setState(GUIState.IN_GAME_PAUSED);
-			} else if(this.state == GUIState.IN_GAME_PLAYING) {
+			}
+			else if (this.state == GUIState.IN_GAME_PLAYING) {
 				game.pause();
 				this.state = GUIState.IN_GAME_PAUSED;
-			} else if(this.state == GUIState.IN_GAME_PAUSED) {
+			}
+			else if (this.state == GUIState.IN_GAME_PAUSED) {
 				game.resume();
 				state = GUIState.IN_GAME_PLAYING;
 			}
-		} else if(arg0.getKeyCode() == KeyEvent.VK_ESCAPE) {
-			if(state == GUIState.IN_GAME_PAUSED || state == GUIState.IN_GAME_PLAYING) {
+		}
+		else if (arg0.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			if (state == GUIState.IN_GAME_PAUSED || state == GUIState.IN_GAME_PLAYING) {
 				game.stop();
 				this.setState(GUIState.GAME_START_MENU);
 			}

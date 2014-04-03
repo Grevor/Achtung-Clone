@@ -19,10 +19,11 @@ public class ScorePanel extends JPanel {
 	
 	public ScorePanel() {
 		super();
-		this.setOpaque(false);
 		nameLabels = new NameLabel[Game.maxPlayers];
 		scoreLabels = new ScoreLabel[Game.maxPlayers];
+		this.setOpaque(false);
 		this.setLayout(new GridLayout(1+Game.maxPlayers, 2, padding, padding));
+		this.setFocusable(false);
 		addHeaderLabel("Player");
 		addHeaderLabel("Score");
 		addPlayerRows(Game.maxPlayers);
