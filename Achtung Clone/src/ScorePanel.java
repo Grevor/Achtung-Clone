@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.Iterator;
@@ -9,6 +10,7 @@ import javax.swing.JPanel;
 
 public class ScorePanel extends JPanel {
 	private static final int padding = 10;
+	private static final Color headerColor = Color.white;
 	private static final Font headerFont = new Font("Helvetica", Font.PLAIN, 30);
 	private static final Font playerFont = new Font("Helvetica", Font.PLAIN, 25);
 	
@@ -56,6 +58,7 @@ public class ScorePanel extends JPanel {
 	private void addHeaderLabel(String text) {
 		JLabel lbl = new JLabel(text);
 		lbl.setFont(headerFont);
+		lbl.setForeground(headerColor);
 		add(lbl);
 	}
 	

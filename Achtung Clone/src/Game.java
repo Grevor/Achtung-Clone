@@ -78,7 +78,7 @@ public class Game implements GameStartDataListener {
 	@Override
 	public void start() {
 		if (createControllers()) {
-			world = new World(playersToArray(), 800, 800); 
+			world = new World(playersToArray(), 1000, 600); 
 			//gameWindow.getContentPane().getWidth(), gameWindow.getContentPane().getHeight());
 			gameWindow.displayGame(world.getBufferedImage());
 			restart();

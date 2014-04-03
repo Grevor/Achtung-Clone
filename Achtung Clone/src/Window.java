@@ -5,6 +5,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -65,16 +66,19 @@ public class Window extends JFrame implements FocusListener, KeyListener {
 		gamePanel.setOpaque(false);
 		gamePanel.setLayout(new GridBagLayout());
 		gamePanel.setBorder(new EmptyBorder(0,0,0,0));
-		setUpGamePanel();
+		setUpScorePanel();
 		gamePanel.setFocusable(false);
 		gamePanel.addFocusListener(this);
 	}
 
-	private void setUpGamePanel() {
+	private void setUpScorePanel() {
 		ScorePanel scorePanel = new ScorePanel();
 		scorePanel.setPlayerData(game.getPlayerData());
 		GridBagConstraints gc = new GridBagConstraints();
 		gc.gridx = 1;
+		gc.insets = new Insets(10,10,10,10);
+		gc.fill = GridBagConstraints.HORIZONTAL;
+		gc.weightx = 1;
 		gamePanel.add(scorePanel, gc);
 	}
 
@@ -139,7 +143,7 @@ public class Window extends JFrame implements FocusListener, KeyListener {
 		GridBagConstraints gc = new GridBagConstraints();
 		gc.gridx = 0;
 		gamePanel.removeAll();
-		setUpGamePanel();
+		setUpScorePanel();
 		gamePanel.add(new JLabel(new ImageIcon(bufferedImage)), gc);
 		setState(GUIState.IN_GAME_PAUSED);
 		this.requestFocus();

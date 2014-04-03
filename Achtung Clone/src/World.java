@@ -40,6 +40,7 @@ public class World {
 		clearBufferedImage(map);
 		clearBufferedImage(collisionMap);
 		drawEdgeCollision(collisionMap);
+		drawEdgeCollision(map);
 		currentTick = 0;
 		for (int i = 0; i < nPlayers; i++) {
 			score[i] = 0;
@@ -49,8 +50,8 @@ public class World {
 
 	private void drawEdgeCollision(BufferedImage collMap) {
 		Graphics2D g = collMap.createGraphics();
-		g.setColor(new Color(2));
-		g.setStroke(new BasicStroke(2));
+		g.setColor(Color.white);
+		g.setStroke(new BasicStroke(6));
 		g.drawLine(0, 0, collMap.getWidth(), 0);
 		g.drawLine(0, 0, 0, collMap.getHeight());
 		g.drawLine(collMap.getWidth(), 0, collMap.getWidth(), collMap.getHeight());
