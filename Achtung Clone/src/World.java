@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.ejml.data.FixedMatrix2_64F;
 
@@ -15,23 +14,25 @@ public class World {
 	private static final int collisionTickLag = (int)(4.8 * Snake.DEFAULT_SNAKE_RADIUS);
 	private final BufferedImage map, collisionMap;
 	private int nPlayers;
+	private PlayerData[] players;
 	private Snake[] snakes;
 	private int[] score;
 	private int nAliveSnakes;
 	private boolean	roundAlive;
 	private long currentTick;
 
-	public World (Controler[] controlers, int width, int height) {
-		int numberOfPlayers = controlers.length;
+	public World (PlayerData[] players, int width, int height) {
+		int numberOfPlayers = players.length;
 		if (numberOfPlayers < 1) {
 			throw new IllegalArgumentException("World need at least 1 player");
 		}
+		this.players = players;
 		map = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		collisionMap = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		nPlayers = numberOfPlayers;
 		snakes = new Snake[numberOfPlayers];
 		score = new int[numberOfPlayers];
-		initSnakes(controlers);
+		initSnakes(players);
 		resetWorld();
 	}
 
@@ -90,10 +91,10 @@ public class World {
 		return map.getHeight();
 	}
 
-	private void initSnakes(Controler[] controlers) {
+	private void initSnakes(PlayerData[] players) {
 		for (int i = 0; i < nPlayers; i++) {
 			try {
-				snakes[i] = new Snake(PlayerColors.getColor(i), controlers[i]);
+				snakes[i] = new Snake(PlayerColors.getColor(i), players[i].getControler());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -126,8 +127,6 @@ public class World {
 						g.drawLine(x, y, oldPosition.x, oldPosition.y);
 						//drawNewSnakeHead(snakes[i]);
 					} else {
-						Point oldPos = VectorUtilities.vectorToPoint(snakes[i].getLastPosition());
-						
 						//g.setStroke(new BasicStroke((float)snakes[i].getRadius() * 2, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
 						//g.setColor(Color.BLACK);
 						//g.drawLine(oldPos.x, oldPos.y, oldPos.x, oldPos.y);
@@ -145,7 +144,6 @@ public class World {
 	}
 
 	private void drawNewSnakeHead(Snake snake, int id) {
-		// TODO Auto-generated method stub
 		ArrayList<Point> getAllPoints = getCollisionPoints(snake.getPosition(), snake.getRadius());
 		
 		for (Point p : getAllPoints) {
@@ -154,7 +152,6 @@ public class World {
 	}
 
 	private void clearOldSnakeHead(Snake snake, int colorAsRGB) {
-		// TODO Auto-generated method stub
 		ArrayList<Point> getAllPoints = getCollisionPoints(snake.getLastPosition(), snake.getRadius());
 		
 		for (Point p : getAllPoints) {
@@ -236,7 +233,7 @@ public class World {
 		nAliveSnakes--;
 		for (int i = 0; i < nPlayers; i++) {
 			if (snakes[i].isAlive()) {
-				score[i]++;
+				players[i].incrementScore(1);
 			}
 		}
 		if (nAliveSnakes < 2) {

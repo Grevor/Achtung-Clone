@@ -1,4 +1,5 @@
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -52,13 +53,13 @@ public class Game implements GameStartDataListener {
 		int nPlayers = numberOfPlayers();
 		if (nPlayers < 1)
 			return false;
-		ListIterator<PlayerData> playerDataIter = playerData.listIterator();
 		controllers = new Controler[nPlayers];
 		int player = 0;
-		for (Iterator iterator = playerData.iterator(); iterator.hasNext();) {
-			PlayerData pd = (PlayerData) iterator.next();
+		for (Iterator<PlayerData> iterator = playerData.iterator(); iterator.hasNext();) {
+			PlayerData pd = iterator.next();
 			if (pd.bothKeysSet()) {
-				controllers[player] = new LocalKeyboardControler(pd.getRightKeyCode().keyCode, pd.getLeftKeyCode().keyCode);
+				pd.setControler(
+						new LocalKeyboardControler(pd.getRightKeyCode().keyCode, pd.getLeftKeyCode().keyCode));
 				gameWindow.addKeyListener((LocalKeyboardControler)controllers[player]);
 				player++;
 			}
@@ -79,7 +80,7 @@ public class Game implements GameStartDataListener {
 	@Override
 	public void start() {
 		if (createControllers()) {
-			world = new World(controllers, 800, 800); 
+			world = new World(playersToArray(), 800, 800); 
 			//gameWindow.getContentPane().getWidth(), gameWindow.getContentPane().getHeight());
 			gameWindow.displayGame(world.getBufferedImage());
 			new Thread( new Runnable() {
@@ -92,6 +93,16 @@ public class Game implements GameStartDataListener {
 		else {
 			//TODO: not enough players
 		}
+	}
+
+	private PlayerData[] playersToArray() {
+		int i = 0;
+		ArrayList<PlayerData> ret= new ArrayList<PlayerData>();
+		for (Iterator iter = playerData.iterator(); iter.hasNext(); i++) {
+			PlayerData pd = (PlayerData) iter.next();
+			if(pd.bothKeysSet()) ret.add(pd);
+		}
+		return (PlayerData[]) ret.toArray(new PlayerData[numberOfPlayers()]);
 	}
 
 	@Override

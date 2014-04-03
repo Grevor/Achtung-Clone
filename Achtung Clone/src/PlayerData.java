@@ -1,11 +1,15 @@
 
-public class PlayerData {
+public class PlayerData implements ScoreUpdateListener {
 	private String name;
 	private KeyCode leftKC, rightKC;
+	private int score;
+	private Controler control;
+	private ScoreUpdateListener scoreListener;
 	public PlayerData(String name, int leftKeyCode, int rightKeyCode) {
 		this.name = name;
 		leftKC = new KeyCode(leftKeyCode);
 		rightKC = new KeyCode(rightKeyCode);
+		score = 0;
 	}
 	
 	public void setName(String name) {
@@ -26,5 +30,27 @@ public class PlayerData {
 	
 	public boolean bothKeysSet() {
 		return leftKC.keyCode != 0 && rightKC.keyCode != 0;
+	}
+	
+	public void incrementScore(int increment) {
+		score += increment;
+	}
+	
+	public void resetScore() {
+		score = 0;
+	}
+	
+	public int getScore() { return score; }
+	
+	public void setControler(Controler c) { control = c; }
+	
+	public Controler getControler() { return control; }
+	
+	public void addScoreListener(ScoreUpdateListener l) {
+		scoreListener = l;
+	}
+	
+	public void clearScoreUpdateListener(ScoreUpdateListener l) {
+		scoreListener = null;
 	}
 }

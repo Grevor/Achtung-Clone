@@ -30,6 +30,7 @@ public class Snake {
 		this.color = color;
 		this.control = controler;
 		snakeRadius = radius;
+		alive = false;
 	}
 
 	public void respawn(double x, double y) {
