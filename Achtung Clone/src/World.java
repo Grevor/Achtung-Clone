@@ -186,7 +186,6 @@ public class World {
 		ArrayList<Point> allPoints = getCollisionPoints(center, radius);
 		for (int i = 0; i < allPoints.size(); i++) {
 			Point p = allPoints.get(i);
-			System.err.println(collisionMap.getRGB(p.x,  p.y));
 			//Magic value! :D
 			//-16777216
 			if(collisionMap.getRGB(p.x, p.y) != collisionRGBColor && !pointIsInPreviousSnakePositions(p, snake)) 
