@@ -119,4 +119,8 @@ public class Snake {
 	public Color getColor() {
 		return color; 
 	}
+	
+	public static double getTurnRadius() {
+		return (Math.PI / DEFAULT_TURN_SPEED) * DEFAULT_SPEED / Math.PI;
+	}
 }

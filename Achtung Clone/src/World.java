@@ -10,7 +10,7 @@ import org.ejml.data.FixedMatrix2_64F;
 
 
 public class World {
-	private static double wallSpawnOffset = 10;
+	private static double wallSpawnOffset = Snake.getTurnRadius() + Snake.DEFAULT_SNAKE_RADIUS;
 	private static final int collisionTickLag = (int)(4.5 * Snake.DEFAULT_SNAKE_RADIUS);
 	private final BufferedImage map, collisionMap;
 	private int nPlayers;
@@ -75,6 +75,12 @@ public class World {
 		}
 		roundAlive = true;
 	}
+	
+	public void drawHeads() {
+		for (int i = 0; i < snakes.length; i++) {
+			drawNewSnakeHead(snakes[i],i);
+		}
+	}
 
 	public void endRound() {
 		roundAlive = false;
@@ -102,7 +108,9 @@ public class World {
 		}
 	}
 
-	public void update() {
+	public void update() { update(true); }
+	
+	public void update(boolean shouldRenderTails) {
 		if (!isAlive()) {
 			return;
 		}
@@ -119,7 +127,7 @@ public class World {
 					killSnake(i);
 				}
 				else {
-					if(!snakes[i].hasHoleThisTick()) {
+					if(!snakes[i].hasHoleThisTick() && shouldRenderTails) {
 						Point oldPosition = VectorUtilities.vectorToPoint(snakes[i].getLastPosition());
 						//map.setRGB(x, y, snakes[i].getColorAsRGB());
 						clearOldSnakeHead(snakes[i], snakes[i].getColorAsRGB());

@@ -92,6 +92,8 @@ public class Game implements GameStartDataListener {
 		this.resume();
 		world.resetWorld();
 		world.update();
+		world.update(false);
+		world.update(false);
 		pause();
 		new Thread( new Runnable() {
 			@Override
