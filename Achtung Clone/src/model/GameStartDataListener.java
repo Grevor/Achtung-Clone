@@ -1,8 +1,8 @@
 package model;
-import java.util.LinkedList;
+import java.util.Iterator;
 
 
 public interface GameStartDataListener {
 	public abstract void start();
-	public abstract LinkedList<PlayerData> getPlayerData();
+	public abstract Iterator<PlayerData> getPlayerData();
 }

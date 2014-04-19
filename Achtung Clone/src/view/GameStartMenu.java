@@ -1,4 +1,5 @@
 package view;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -9,31 +10,32 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ListIterator;
+import java.util.Iterator;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
-import core.Game;
 import model.GameStartDataListener;
 import model.KeyCode;
-import model.PlayerColors;
 import model.PlayerData;
-
+import core.Game;
 
 public class GameStartMenu extends JPanel implements MouseListener {
-	private final static int padding = 15;
-	private final static Font titleFont = new Font("Helvectica", Font.PLAIN, 30);
-	private final static Font playerFont = new Font("Helvectica", Font.BOLD, 15);
-	private final static Color textColor = Color.white;
-	private final JTextField[] playerNames = new JTextField[Game.maxPlayers];
-	private final JPanel playerPanel = new JPanel(new GridLayout(Game.maxPlayers+1,3, padding,padding));
-	private final JButton start = new JButton("Start Game!");
-	private final GameStartDataListener startListener;
+	private final static int			padding		= 15;
+	private final static Font			titleFont	= new Font("Helvectica", Font.PLAIN, 30);
+	private final static Font			playerFont	= new Font("Helvectica", Font.BOLD, 15);
+	private final static Color			textColor	= Color.white;
 	
+	private final PlayerRow[]			playerRows = new PlayerRow[Game.maxPlayers];
+	private final JPanel				playerPanel	= new JPanel(new GridLayout(Game.maxPlayers + 1, 3, padding, padding));
+	private final JButton				start		= new JButton("Start Game!");
+	private final GameStartDataListener	startListener;
+
 	public GameStartMenu(GameStartDataListener startListener) {
 		super();
 		this.startListener = startListener;
@@ -45,62 +47,101 @@ public class GameStartMenu extends JPanel implements MouseListener {
 		addPlayers();
 		this.add(playerPanel);
 		GridBagConstraints gc = new GridBagConstraints();
-		gc.insets = new Insets(20,0,0,0);
+		gc.insets = new Insets(20, 0, 0, 0);
 		gc.gridx = 0;
 		gc.gridy = 1;
 		this.add(start, gc);
 		start.addMouseListener(this);
 	}
-	
+
 	private void addTitles() {
 		playerPanel.add(newTitleLabel("Player"));
 		playerPanel.add(newTitleLabel("Left"));
 		playerPanel.add(newTitleLabel("Right"));
 	}
-	
+
 	private JLabel newTitleLabel(String text) {
 		final JLabel lbl = new JLabel(text, SwingConstants.CENTER);
 		lbl.setForeground(textColor);
 		lbl.setFont(titleFont);
 		return lbl;
 	}
-	
+
 	private void addPlayers() {
-		ListIterator<PlayerData> playerDataIter = startListener.getPlayerData().listIterator();
+		Iterator<PlayerData> playerDataIter = startListener.getPlayerData();
 		for (int player = 0; player < Game.maxPlayers; player++) {
-			PlayerData playerData = playerDataIter.next();
-			playerNames[player] = new JTextField(playerData.getName());
-			playerNames[player].setForeground(PlayerColors.getColor(player));
-			playerNames[player].setFont(playerFont);
-			playerNames[player].setHorizontalAlignment(JTextField.CENTER);
-			playerNames[player].setOpaque(false);
-			playerPanel.add(playerNames[player]);
-			playerPanel.add(new HotkeyButton(playerData.getColor(), playerData.getLeftKeyCode()));
-			playerPanel.add(new HotkeyButton(playerData.getColor(), playerData.getRightKeyCode()));
+			playerRows[player] = new PlayerRow(playerDataIter.next());
 		}
 	}
-	
+
+	private class PlayerRow implements DocumentListener {
+		private PlayerData			playerData;
+		private final JTextField	nameTextField	= new JTextField();
+		private final HotkeyButton	leftKeyButton	= new HotkeyButton(),
+													rightKeyButton = new HotkeyButton();
+
+		public PlayerRow(PlayerData pd) {
+			nameTextField.setFont(playerFont);
+			nameTextField.setHorizontalAlignment(JTextField.CENTER);
+			nameTextField.setOpaque(false);
+			this.setPlayerData(pd);
+			playerPanel.add(nameTextField);
+			playerPanel.add(leftKeyButton);
+			playerPanel.add(rightKeyButton);
+			nameTextField.getDocument().addDocumentListener(this);
+		}
+
+		public void setPlayerData(PlayerData pd) {
+			this.playerData = pd;
+			nameTextField.setText(pd.getName());
+			nameTextField.setForeground(pd.getColor());
+			leftKeyButton.setKeyCodeObject(pd.getLeftKeyCode());
+			leftKeyButton.setForeground(pd.getColor());
+			rightKeyButton.setKeyCodeObject(pd.getRightKeyCode());
+			rightKeyButton.setForeground(pd.getColor());
+		}
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			// TODO Auto-generated method stub
+			playerData.setName(nameTextField.getText());
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			// TODO Auto-generated method stub
+			playerData.setName(nameTextField.getText());
+		}
+	}
+
 	private class HotkeyButton extends JButton implements KeyListener, MouseListener {
-		private KeyCode hotkey;
-		
-		public HotkeyButton(Color color, KeyCode hotkey) {
+		private KeyCode	hotkey;
+
+		public HotkeyButton() {
 			super();
 			setFocusPainted(false);
-      setMargin(new Insets(0, 0, 0, 0));
-      setContentAreaFilled(false);
-      //setBorderPainted(false);
-      setOpaque(false);
-      
-			this.hotkey = hotkey;
-			if(hotkey.getKeyCode() == 0) this.setText("");
-			else this.setText(KeyEvent.getKeyText(hotkey.getKeyCode()));
-			setForeground(color);
+			setContentAreaFilled(false);
+			setOpaque(false);
 			this.addMouseListener(this);
 		}
-		
+
+		public void setKeyCodeObject(KeyCode kcObject) {
+			this.hotkey = kcObject;
+			if (hotkey.getKeyCode() == 0)
+				this.setText("");
+			else
+				this.setText(KeyEvent.getKeyText(hotkey.getKeyCode()));
+		}
+
 		@Override
 		public void keyPressed(KeyEvent arg0) {
-			switch(arg0.getKeyCode()) {
+			switch (arg0.getKeyCode()) {
 				case 0:
 				case KeyEvent.VK_SPACE:
 					break;
@@ -114,40 +155,46 @@ public class GameStartMenu extends JPanel implements MouseListener {
 			}
 			this.removeKeyListener(this);
 		}
-		
+
 		@Override
 		public void keyReleased(KeyEvent arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
+
 		@Override
 		public void keyTyped(KeyEvent arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
+
 		@Override
 		public void mouseClicked(MouseEvent arg0) {
 			this.addKeyListener(this);
 		}
+
 		@Override
 		public void mouseEntered(MouseEvent arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
+
 		@Override
 		public void mouseExited(MouseEvent arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
+
 		@Override
 		public void mousePressed(MouseEvent arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
+
 		@Override
 		public void mouseReleased(MouseEvent arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
 	}
 
@@ -159,24 +206,24 @@ public class GameStartMenu extends JPanel implements MouseListener {
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

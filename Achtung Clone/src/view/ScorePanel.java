@@ -21,14 +21,10 @@ public class ScorePanel extends JPanel {
 	private static final Font playerFont = new Font("Helvetica", Font.PLAIN, 25);
 	
 	private final PlayerRow[] playerRows;
-	//private final NameLabel[] nameLabels;
-	//private final ScoreLabel[] scoreLabels;
 	
 	public ScorePanel() {
 		super();
 		playerRows = new PlayerRow[Game.maxPlayers];
-		//nameLabels = new NameLabel[Game.maxPlayers];
-		//scoreLabels = new ScoreLabel[Game.maxPlayers];
 		this.setOpaque(false);
 		this.setLayout(new GridLayout(1+Game.maxPlayers, 2, padding, padding));
 		this.setFocusable(false);
@@ -37,19 +33,15 @@ public class ScorePanel extends JPanel {
 		addPlayerRows(Game.maxPlayers);
 	}
 	
-	public void setPlayerData(LinkedList<PlayerData> playerData) {
+	public void setPlayerData(Iterator<PlayerData> iter) {
 		int i = 0;
-		for (Iterator<PlayerData> iter = playerData.iterator(); iter.hasNext();) {
+		while(iter.hasNext()) {
 			PlayerData pd = (PlayerData) iter.next();
 			playerRows[i].subscribe(pd);
-			//nameLabels[i].subscribe(pd);
-			//scoreLabels[i].subscribe(pd);
 			i++;
 		}
 		for (; i < playerRows.length; i++) {
 			playerRows[i].desubscribe();
-			//nameLabels[i].desubscribe();
-			//scoreLabels[i].desubscribe();
 		}
 	}
 	
@@ -65,8 +57,6 @@ public class ScorePanel extends JPanel {
 			playerRows[i] = new PlayerRow();
 			add(playerRows[i].nameLabel);
 			add(playerRows[i].scoreLabel);
-			//add(nameLabels[i] = new NameLabel());
-			//add(scoreLabels[i] = new ScoreLabel());
 		}
 	}
 	
@@ -127,73 +117,5 @@ public class ScorePanel extends JPanel {
 			nameLabel.setText("");
 			scoreLabel.setText("");
 		}
-		
-		/*
-		private class ScoreLabel extends JLabel implements ScoreUpdateListener {
-			PlayerData subscription;
-
-			public ScoreLabel() {
-				super("",SwingConstants.CENTER);
-				this.setFont(playerFont);
-			}
-
-			public void subscribe(PlayerData pd) {
-				if (subscription != null)
-					throw new Error("This ScoreLabel is already subscribed to a PlayerData object.");
-				this.setForeground(pd.getColor());
-				subscription = pd;
-				pd.addScoreListener(this);
-				if (pd.isPlayerActivated()) {
-					this.setText(Integer.toString(pd.getScore()));
-				}
-			}
-
-			public void desubscribe() {
-				if (subscription != null) {
-					subscription.clearScoreUpdateListener(this);
-					subscription = null;
-					this.setText("");
-				}
-			}
-
-			@Override
-			public void scoreChanged(int newScore) {
-				this.setText(Integer.toString(newScore));
-			}
-
-		}
-
-		private class NameLabel extends JLabel implements NameUpdateListener {
-			PlayerData subscription;
-
-			public NameLabel() {
-				this.setFont(playerFont);
-			}
-
-			public void subscribe(PlayerData pd) {
-				if (subscription != null)
-					throw new Error("This NameLabel is already subscribed to a PlayerData object.");
-				this.setForeground(pd.getColor());
-				subscription = pd;
-				pd.setNameListener(this);
-				if (pd.isPlayerActivated()) {
-					this.setText(pd.getName());
-				}
-			}
-
-			public void desubscribe() {
-				if (subscription != null) {
-					subscription.clearNameListener();
-					subscription = null;
-					this.setText("");
-				}
-			}
-
-			@Override
-			public void nameChanged(String newName) {
-				this.setText(newName);
-			}
-
-		}*/
 	}
 }

@@ -132,8 +132,8 @@ public class Game implements GameStartDataListener {
 	}
 
 	@Override
-	public LinkedList<PlayerData> getPlayerData() {
-		return playerData;
+	public Iterator<PlayerData> getPlayerData() {
+		return playerData.iterator();
 	}
 
 	public void stop() {
