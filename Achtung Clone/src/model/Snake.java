@@ -15,10 +15,10 @@ import core.Game;
 
 public class Snake {
 	public static final double DEFAULT_SNAKE_RADIUS = 3;
-	private static final double DEFAULT_SPEED = 60.0 / Game.maxFPS;
-	private static final double DEFAULT_TURN_SPEED = Math.PI / Game.maxFPS * .6;
+	private static final double DEFAULT_SPEED = 100.0 / Game.maxFPS;
+	private static final double DEFAULT_TURN_SPEED = Math.PI / Game.maxFPS;
 	private static final long SNAKE_OPENING_CYCLE_LENGTH = 120;
-	private static final long SNAKE_OPENING_TIME = 20;
+	private static final long SNAKE_OPENING_TIME = 15;
 	private static Random startingTickRandomizer = new Random();
 	private FixedMatrix2_64F position, direction;
 	private Deque<CollisionData> lastPositions;
