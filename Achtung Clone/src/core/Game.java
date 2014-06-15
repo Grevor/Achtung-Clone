@@ -1,16 +1,18 @@
 package core;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-import controller.LocalKeyboardController;
-import view.Window;
 import model.GameStartDataListener;
 import model.PlayerColors;
 import model.PlayerData;
 import model.World;
+import view.Window;
+import controller.LocalKeyboardController;
 
 
 public class Game implements GameStartDataListener {
@@ -85,7 +87,8 @@ public class Game implements GameStartDataListener {
 	@Override
 	public void start() {
 		if (createControllers()) {
-			world = new World(playersToArray(), 1000, 600); 
+			Dimension screenDimensions = Toolkit.getDefaultToolkit().getScreenSize();
+			world = new World(playersToArray(), screenDimensions.width * 4/5, screenDimensions.height * 9/10); 
 			gameWindow.displayGame(world.getBufferedImage());
 			restart();
 		}
