@@ -30,7 +30,7 @@ public class Game implements GameStartDataListener {
 		playerData.add(new PlayerData("Player1", PlayerColors.getColor(0), KeyEvent.VK_Z, KeyEvent.VK_X));
 		playerData.add(new PlayerData("Player2", PlayerColors.getColor(1), KeyEvent.VK_PERIOD, KeyEvent.VK_MINUS));
 		for (int player = 2; player < maxPlayers; player++) {
-				playerData.add(new PlayerData("Player"+(player+1), PlayerColors.getColor(player), 0,0));
+			playerData.add(new PlayerData("Player"+(player+1), PlayerColors.getColor(player), 0,0));
 		}
 		gameWindow = new Window(this);
 	}
@@ -42,7 +42,7 @@ public class Game implements GameStartDataListener {
 		long workTime = 0;
 		while(world.isAlive()) {
 			
-			gameWindow.repaint();
+			gameWindow.repaint(world.hasScoreChanged());
 			newTime = System.nanoTime();
 			timeDiff = newTime - previousTime;
 			workTime += timeDiff;
@@ -57,6 +57,7 @@ public class Game implements GameStartDataListener {
 				e.printStackTrace();
 			}
 		}
+		gameWindow.repaint(world.hasScoreChanged());
 	}
 	
 	private boolean createControllers() {
@@ -88,7 +89,7 @@ public class Game implements GameStartDataListener {
 	public void start() {
 		if (createControllers()) {
 			Dimension screenDimensions = Toolkit.getDefaultToolkit().getScreenSize();
-			world = new World(playersToArray(), screenDimensions.width * 4/5, screenDimensions.height * 9/10); 
+			world = new World(getActivePlayers(), screenDimensions.width * 4/5, screenDimensions.height * 9/10); 
 			gameWindow.displayGame(world.getBufferedImage());
 			restart();
 		}
@@ -125,7 +126,7 @@ public class Game implements GameStartDataListener {
 		this.running = true;
 	}
 
-	private PlayerData[] playersToArray() {
+	public PlayerData[] getActivePlayers() {
 		ArrayList<PlayerData> ret= new ArrayList<PlayerData>();
 		for (Iterator<PlayerData> iter = playerData.iterator(); iter.hasNext();) {
 			PlayerData pd = iter.next();

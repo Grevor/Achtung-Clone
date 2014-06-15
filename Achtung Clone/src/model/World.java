@@ -26,6 +26,7 @@ public class World {
 	private boolean	roundAlive;
 	private long currentTick;
 	private boolean wrap = false;
+	private boolean scoreChanged;
 
 	public World (PlayerData[] players, int width, int height) {
 		int numberOfPlayers = players.length;
@@ -39,6 +40,10 @@ public class World {
 		snakes = new Snake[numberOfPlayers];
 		initSnakes(players);
 		resetWorld();
+	}
+	
+	public boolean hasScoreChanged() {
+		return scoreChanged;
 	}
 
 	public void resetWorld() {
@@ -109,6 +114,7 @@ public class World {
 		if (!isAlive()) {
 			return;
 		}
+		scoreChanged = false;
 		currentTick++;
 		updateAllSnakes();
 		
@@ -321,6 +327,7 @@ public class World {
 		if (nAliveSnakes < 2) {
 			endRound();
 		}
+		scoreChanged = true;
 	}
 
 	public BufferedImage getBufferedImage() {

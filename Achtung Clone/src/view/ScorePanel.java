@@ -2,16 +2,16 @@ package view;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedList;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import core.Game;
 import model.PlayerData;
 import model.PlayerDataUpdateListener;
+import core.Game;
 
 
 public class ScorePanel extends JPanel {
@@ -21,6 +21,7 @@ public class ScorePanel extends JPanel {
 	private static final Font playerFont = new Font("Helvetica", Font.PLAIN, 25);
 	
 	private final PlayerRow[] playerRows;
+	private PlayerData[] sortedPlayers;
 	
 	public ScorePanel() {
 		super();
@@ -33,6 +34,16 @@ public class ScorePanel extends JPanel {
 		addPlayerRows(Game.maxPlayers);
 	}
 	
+	public void setPlayerData(PlayerData[] activePlayers) {
+		sortedPlayers = activePlayers;
+		update();
+	}
+	
+	public void update() {
+		Arrays.sort(sortedPlayers, PlayerData.DescendingScoreComparator.instance);
+		updatePlayerRows();
+	}
+	
 	public void setPlayerData(Iterator<PlayerData> iter) {
 		int i = 0;
 		while(iter.hasNext()) {
@@ -41,7 +52,16 @@ public class ScorePanel extends JPanel {
 			i++;
 		}
 		for (; i < playerRows.length; i++) {
-			playerRows[i].desubscribe();
+			playerRows[i].unsubscribe();
+		}
+	}
+	
+	private void updatePlayerRows() {
+		for (int i = 0; i < sortedPlayers.length; i++) {
+			playerRows[i].display(sortedPlayers[i]);
+		}
+		for (int i = sortedPlayers.length; i < playerRows.length; i++) {
+			playerRows[i].clear();
 		}
 	}
 	
@@ -75,8 +95,20 @@ public class ScorePanel extends JPanel {
 			lbl.setFont(playerFont);
 		}
 		
+		public void display(PlayerData pd) {
+			this.nameLabel.setForeground(pd.getColor());
+			this.nameLabel.setText(pd.getName());
+			this.scoreLabel.setForeground(pd.getColor());
+			this.scoreLabel.setText(Integer.toString(pd.getScore()));
+		}
+		
+		public void clear() {
+			this.nameLabel.setText("");
+			this.scoreLabel.setText("");
+		}
+		
 		public void subscribe(PlayerData pd) {
-			desubscribe();
+			unsubscribe();
 			subscription = pd;
 			pd.addUpdateListener(this);
 			nameLabel.setForeground(pd.getColor());
@@ -87,7 +119,7 @@ public class ScorePanel extends JPanel {
 			}
 		}
 		
-		public void desubscribe() {
+		public void unsubscribe() {
 			if (subscription != null) {
 				subscription.clearUpdateListener();
 				subscription = null;

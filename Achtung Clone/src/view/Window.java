@@ -57,7 +57,7 @@ public class Window extends JFrame implements FocusListener, KeyListener {
 	private void createMenus() {
 		mainMenu = new MainMenu();
 		gameStartMenu = new GameStartMenu(game);
-		gamePanel = new GamePanel(game.getPlayerData());
+		gamePanel = new GamePanel();//(game.getPlayerData());
 	}
 
 	private void setState(GUIState newState) {
@@ -118,9 +118,16 @@ public class Window extends JFrame implements FocusListener, KeyListener {
 
 	public void displayGame(BufferedImage bufferedImage) {
 		gamePanel.setGameField(bufferedImage);
+		gamePanel.setPlayerData(game.getActivePlayers());
 		setState(GUIState.IN_GAME_PAUSED);
 		this.requestFocus();
 		this.repaint();
+	}
+	
+	public void repaint(boolean scoreChanged) {
+		if (scoreChanged)
+			gamePanel.updateScorePanel();
+		repaint();
 	}
 
 	@Override

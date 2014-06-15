@@ -3,8 +3,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.image.BufferedImage;
-import java.util.Iterator;
-import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -15,19 +13,37 @@ import model.PlayerData;
 
 public class GamePanel extends JPanel {
 	private ImageIcon gameImage;
+	private ScorePanel scorePanel;
 	
-	public GamePanel(Iterator<PlayerData> iterator) {
+	public GamePanel () {
 		this.setOpaque(false);
 		this.setLayout(new GridBagLayout());
 		this.setBorder(new EmptyBorder(0, 0, 0, 0));
 		this.setFocusable(false);
 		setUpGameImageField();
-		setUpScorePanel(iterator);
+		setUpScorePanel();
 	}
+	
+	public void updateScorePanel() {
+		scorePanel.update();
+	}
+	
+/*	public GamePanel(Iterator<PlayerData> iterator) {
+		this();
+		setPlayerData(iterator);
+	}*/
 
 	public void setGameField(BufferedImage map) {
 		gameImage.setImage(map);
 	}
+	
+	public void setPlayerData(PlayerData[] activePlayers) {
+		scorePanel.setPlayerData(activePlayers);
+	}
+	
+/*	public void setPlayerData(Iterator<PlayerData> playerData) {
+		scorePanel.setPlayerData(playerData);
+	}*/
 
 	private void setUpGameImageField() {
 		GridBagConstraints gc = new GridBagConstraints();
@@ -38,9 +54,8 @@ public class GamePanel extends JPanel {
 		this.add(new JLabel(gameImage = new ImageIcon()), gc);
 	}
 	
-	private void setUpScorePanel(Iterator<PlayerData> playerData) {
-		ScorePanel scorePanel = new ScorePanel();
-		scorePanel.setPlayerData(playerData);
+	private void setUpScorePanel() {
+		scorePanel = new ScorePanel();
 		GridBagConstraints gc = new GridBagConstraints();
 		gc.gridx = 1;
 		gc.insets = new Insets(10, 10, 10, 10);

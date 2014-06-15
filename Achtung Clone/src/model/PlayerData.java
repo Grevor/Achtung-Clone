@@ -1,10 +1,20 @@
 package model;
 import java.awt.Color;
+import java.util.Comparator;
 
 import controller.Controller;
 
 
 public class PlayerData {
+	
+	public static class DescendingScoreComparator implements Comparator<PlayerData> {
+		public static final DescendingScoreComparator instance = new DescendingScoreComparator();
+		@Override
+		public int compare(PlayerData o1, PlayerData o2) {
+			return o2.score -o1.score;
+		}
+	}
+	
 	private String name;
 	private int leftKC, rightKC;
 	private KeyCode leftKCinterface, rightKCinterface;
@@ -33,7 +43,7 @@ public class PlayerData {
 	
 	public void setName(String name) {
 		this.name = name;
-		updateListener.nameChanged(name);
+		if (updateListener != null) updateListener.nameChanged(name);
 	}
 	
 	public String getName() {
@@ -49,11 +59,13 @@ public class PlayerData {
 	}
 	
 	private void announceIfActiveStateChanged(boolean wasActive) {
-		boolean isActive = isPlayerActivated();
-		if (wasActive == false && isActive)
-			updateListener.activated();
-		else if (wasActive && isActive == false)
-			updateListener.deactivated();
+		if (updateListener != null) {
+			boolean isActive = isPlayerActivated();
+			if (wasActive == false && isActive)
+				updateListener.activated();
+			else if (wasActive && isActive == false)
+				updateListener.deactivated();
+		}
 	}
 	
 	public boolean isPlayerActivated() {
@@ -62,12 +74,12 @@ public class PlayerData {
 	
 	public void incrementScore(int increment) {
 		score += increment;
-		updateListener.scoreChanged(score);
+		if (updateListener != null) updateListener.scoreChanged(score);
 	}
 	
 	public void resetScore() {
 		score = 0;
-		updateListener.scoreChanged(score);
+		if (updateListener != null) updateListener.scoreChanged(score);
 	}
 	
 	public int getScore() { return score; }
@@ -118,4 +130,5 @@ public class PlayerData {
 		}
 		
 	}
+
 }
