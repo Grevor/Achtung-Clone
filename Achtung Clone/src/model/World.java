@@ -16,12 +16,12 @@ import org.ejml.data.FixedMatrix2_64F;
 public class World {
 	private static double wallSpawnOffset = Snake.getTurnRadius() + Snake.DEFAULT_SNAKE_RADIUS * 2;
 	private static final int collisionTickLag = 2;
-	private int collisionRGBColor;
-	private final BufferedImage map, collisionMap;
+	private static final int collisionClearRGBColor = 0xFF000000; //ARGB
+	private static final int borderSize = 6;
+	private final BufferedImage displayMap, collisionMap;
 	private int nPlayers;
 	private PlayerData[] players;
 	private Snake[] snakes;
-	private int[] score;
 	private int nAliveSnakes;
 	private boolean	roundAlive;
 	private long currentTick;
@@ -32,32 +32,28 @@ public class World {
 			throw new IllegalArgumentException("World need at least 1 player");
 		}
 		this.players = players;
-		map = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		displayMap = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		collisionMap = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		nPlayers = numberOfPlayers;
 		snakes = new Snake[numberOfPlayers];
-		score = new int[numberOfPlayers];
 		initSnakes(players);
 		resetWorld();
 	}
 
 	public void resetWorld() {
-		clearBufferedImage(map);
+		clearBufferedImage(displayMap);
 		clearBufferedImage(collisionMap);
-		collisionRGBColor = collisionMap.getRGB(0, 0);
+		//collisionClearRGBColor = collisionMap.getRGB(0, 0);
 		drawEdgeCollision(collisionMap);
-		drawEdgeCollision(map);
+		drawEdgeCollision(displayMap);
 		currentTick = 0;
-		for (int i = 0; i < nPlayers; i++) {
-			score[i] = 0;
-		}
 		nextRound();
 	}
 
 	private void drawEdgeCollision(BufferedImage collMap) {
 		Graphics2D g = collMap.createGraphics();
 		g.setColor(Color.white);
-		g.setStroke(new BasicStroke(6));
+		g.setStroke(new BasicStroke(borderSize));
 		g.drawLine(0, 0, collMap.getWidth(), 0);
 		g.drawLine(0, 0, 0, collMap.getHeight());
 		g.drawLine(collMap.getWidth(), 0, collMap.getWidth(), collMap.getHeight());
@@ -84,7 +80,7 @@ public class World {
 
 	public void drawHeads() {
 		for (int i = 0; i < snakes.length; i++) {
-			drawNewSnakeHead(snakes[i],i, map);
+			drawNewSnakeHead(snakes[i],i, displayMap);
 		}
 	}
 
@@ -97,11 +93,11 @@ public class World {
 	}
 
 	public int getWidth() {
-		return map.getWidth();
+		return displayMap.getWidth();
 	}
 
 	public int getHeight() {
-		return map.getHeight();
+		return displayMap.getHeight();
 	}
 
 	private void initSnakes(PlayerData[] players) {
@@ -123,7 +119,7 @@ public class World {
 		currentTick++;
 		updateAllSnakes();
 
-		Graphics2D g = map.createGraphics();
+		Graphics2D g = displayMap.createGraphics();
 		for (int i = 0; i < nPlayers; i++) {
 			if (snakes[i].isAlive()) {
 				FixedMatrix2_64F newPos = snakes[i].getPosition();
@@ -141,7 +137,7 @@ public class World {
 						g.drawLine(x, y, oldPosition.x, oldPosition.y);
 					} else {
 						clearOldSnakeHead(snakes[i], snakes[i].getColorAsRGB());
-						drawNewSnakeHead(snakes[i], i, map);
+						drawNewSnakeHead(snakes[i], i, displayMap);
 					}
 				}
 				updateCollision(snakes[i], i);
@@ -153,10 +149,12 @@ public class World {
 	private void drawNewSnakeHead(Snake snake, int id, BufferedImage img){ drawNewSnakeHead(snake, id,img, true);}
 	
 	private void drawNewSnakeHead(Snake snake, int id, BufferedImage img, boolean respectOldColor) {
-		ArrayList<Point> getAllPoints = getCollisionPoints(snake.getPosition(), snake.getRadius());
+		ArrayList<Point> collisionPoints = getCollisionPoints(snake.getPosition(), snake.getRadius());
 
-		for (Point p : getAllPoints) {
-			if(!respectOldColor || (respectOldColor && img.getRGB(p.x, p.y) != snake.getColorAsRGB())) img.setRGB(p.x, p.y, PlayerColors.getSnakeHeadColor(id).getRGB());
+		for (Point p : collisionPoints) {
+			if(!respectOldColor || (respectOldColor && img.getRGB(p.x, p.y) != snake.getColorAsRGB())) {
+				img.setRGB(p.x, p.y, PlayerColors.getSnakeHeadColor(id).getRGB());
+			}
 		}
 	}
 
@@ -164,7 +162,7 @@ public class World {
 		ArrayList<Point> getAllPoints = getCollisionPoints(snake.getLastPosition(), snake.getRadius());
 
 		for (Point p : getAllPoints) {
-			if(map.getRGB(p.x, p.y) != colorAsRGB) map.setRGB(p.x, p.y, Color.BLACK.getRGB());
+			if(displayMap.getRGB(p.x, p.y) != colorAsRGB) displayMap.setRGB(p.x, p.y, Color.BLACK.getRGB());
 		}
 	}
 
@@ -189,9 +187,7 @@ public class World {
 		ArrayList<Point> allPoints = getCollisionPoints(center, radius);
 		for (int i = 0; i < allPoints.size(); i++) {
 			Point p = allPoints.get(i);
-			//Magic value! :D
-			//-16777216
-			if(collisionMap.getRGB(p.x, p.y) != collisionRGBColor && !pointIsInPreviousSnakePositions(p, snake)) 
+			if(collisionMap.getRGB(p.x, p.y) != collisionClearRGBColor && !pointIsInPreviousSnakePositions(p, snake)) 
 				return true;
 		}
 		return false;
@@ -229,6 +225,35 @@ public class World {
 		}
 		return ret;
 	}
+	
+	/**
+	 * Gets all grid-points which are of interest when checking for collision.
+	 * @param center - The center of the object.
+	 * @param radius - The radius.
+	 * @return
+	 * All points which the snake will collide with. These points will be inside the grid.
+	 */
+	private ArrayList<Point> getCollisionPointsWrapped(FixedMatrix2_64F center, double radius) {
+		ArrayList<Point> ret = new ArrayList<Point>(20);
+		int startX = (int)(center.a1 - radius);
+		int startY = (int)(center.a2 - radius);
+		int endX = startX + (int)(2 * radius);
+		int endY = startY + (int)(2 * radius);
+		for(int y = startY; y <= endY; y++) {
+			for(int x = startX; x <= endX; x++) {
+				if(getDistanceToPoint(x,y, center) <= radius) {
+					int xWrapped = x % (collisionMap.getWidth());
+					if (xWrapped < 0)
+						xWrapped += collisionMap.getWidth();
+					int yWrapped = y % (collisionMap.getHeight());
+					if (yWrapped < 0)
+						yWrapped += collisionMap.getHeight();
+					ret.add(new Point(xWrapped,yWrapped)); 
+				}
+			}
+		}
+		return ret;
+	}
 
 	private double getDistanceToPoint(int x, int y, FixedMatrix2_64F center) {
 		return VectorUtilities.getLength(
@@ -256,7 +281,7 @@ public class World {
 	}
 
 	public BufferedImage getBufferedImage() {
-		return map;
+		return displayMap;
 	}
 
 	public void kill() {
