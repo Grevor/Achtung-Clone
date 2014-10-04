@@ -13,6 +13,7 @@ import java.awt.event.MouseListener;
 import java.util.Iterator;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -33,6 +34,7 @@ public class GameStartMenu extends JPanel implements MouseListener {
 	
 	private final PlayerRow[]			playerRows = new PlayerRow[Game.maxPlayers];
 	private final JPanel				playerPanel	= new JPanel(new GridLayout(Game.maxPlayers + 1, 3, padding, padding));
+	private final JCheckBox				wrap		= new JCheckBox("Wrap map");
 	private final JButton				start		= new JButton("Start Game!");
 	private final GameStartDataListener	startListener;
 
@@ -50,6 +52,9 @@ public class GameStartMenu extends JPanel implements MouseListener {
 		gc.insets = new Insets(20, 0, 0, 0);
 		gc.gridx = 0;
 		gc.gridy = 1;
+		wrap.setFocusPainted(false);
+		this.add(wrap, gc);
+		gc.gridy++;
 		this.add(start, gc);
 		start.addMouseListener(this);
 	}
@@ -200,7 +205,7 @@ public class GameStartMenu extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		startListener.start();
+		startListener.start(wrap.isSelected());
 	}
 
 	@Override

@@ -25,10 +25,10 @@ public class World {
 	private int nAliveSnakes;
 	private boolean	roundAlive;
 	private long currentTick;
-	private boolean wrap = false;
+	private boolean wrap = true;
 	private boolean scoreChanged;
 
-	public World (PlayerData[] players, int width, int height) {
+	public World (PlayerData[] players, int width, int height, boolean wrap) {
 		int numberOfPlayers = players.length;
 		if (numberOfPlayers < 1) {
 			throw new IllegalArgumentException("World need at least 1 player");
@@ -38,6 +38,7 @@ public class World {
 		collisionMap = new BufferedImage(width-2*borderSize, height-2*borderSize, BufferedImage.TYPE_INT_RGB);
 		nPlayers = numberOfPlayers;
 		snakes = new Snake[numberOfPlayers];
+		this.wrap = wrap;
 		initSnakes(players);
 		resetWorld();
 	}
@@ -52,6 +53,12 @@ public class World {
 		drawEdgeCollision(displayMap);
 		currentTick = 0;
 		nextRound();
+		this.update();
+		this.update();
+		this.update();
+		this.update();
+		this.update(false);
+		this.update(false);
 	}
 
 	private void drawEdgeCollision(BufferedImage collMap) {

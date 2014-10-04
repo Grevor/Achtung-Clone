@@ -105,8 +105,8 @@ public class Window extends JFrame implements FocusListener, KeyListener {
 		screen.setFullScreenWindow(this);
 		if (screen.isDisplayChangeSupported()) {
 			screen.setDisplayMode(screen.getDisplayMode());
-			isFullScreen = true;
 		}
+		isFullScreen = true;
 	}
 
 	private void restoreScreen() {

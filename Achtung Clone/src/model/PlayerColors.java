@@ -6,11 +6,12 @@ public class PlayerColors {
 	public static Color getColor(int id) throws OutOfColorsException {
 		switch (id) {
 			case 0: return Color.red;
-			case 1: return Color.blue;
-			case 2: return Color.green;
-			case 3: return Color.magenta;
-			case 4: return Color.orange;
-			case 5: return Color.cyan;
+			case 1: return Color.green;
+			case 2: return Color.cyan;
+			case 3: return new Color(255,180,30);//Color.orange;
+			case 4: return new Color(255,100,190);//Color.pink;//Color.blue;
+			case 5: return new Color(100,0,255);//Color.magenta;
+			
 			default:
 				throw new OutOfColorsException();
 		}

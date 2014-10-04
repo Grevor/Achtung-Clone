@@ -86,10 +86,10 @@ public class Game implements GameStartDataListener {
 	}
 	
 	@Override
-	public void start() {
+	public void start(boolean wrapMap) {
 		if (createControllers()) {
 			Dimension screenDimensions = Toolkit.getDefaultToolkit().getScreenSize();
-			world = new World(getActivePlayers(), screenDimensions.width * 4/5, screenDimensions.height * 9/10); 
+			world = new World(getActivePlayers(), screenDimensions.width * 4/5, screenDimensions.height * 9/10, wrapMap); 
 			gameWindow.displayGame(world.getBufferedImage());
 			restart();
 		}
@@ -101,9 +101,6 @@ public class Game implements GameStartDataListener {
 	public void restart() {
 		this.resume();
 		world.resetWorld();
-		world.update();
-		world.update(false);
-		world.update(false);
 		pause();
 		new Thread( new Runnable() {
 			@Override
